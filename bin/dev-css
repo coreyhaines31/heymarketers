@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -u
+
+echo "Starting Tailwind build watcher..."
+if yarn build:css:watch; then
+  exit 0
+fi
+
+echo "Watcher failed, falling back to periodic rebuilds." >&2
+while true; do
+  yarn build:css
+  sleep 5
+done
