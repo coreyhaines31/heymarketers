@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_19_225154) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_20_041846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,12 +22,49 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_19_225154) do
     t.index ["slug"], name: "index_accounts_on_slug", unique: true
   end
 
+  create_table "company_profiles", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name"
+    t.text "description"
+    t.string "website"
+    t.boolean "logo_attached"
+    t.bigint "location_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_company_profiles_on_account_id"
+    t.index ["location_id"], name: "index_company_profiles_on_location_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_locations_on_slug", unique: true
+  end
+
+  create_table "marketer_profiles", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "title"
+    t.text "bio"
+    t.integer "hourly_rate"
+    t.bigint "location_id", null: false
+    t.string "availability"
+    t.string "portfolio_url"
+    t.boolean "resume_attached"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_marketer_profiles_on_account_id"
+    t.index ["location_id"], name: "index_marketer_profiles_on_location_id"
+  end
+
+  create_table "marketer_skills", force: :cascade do |t|
+    t.bigint "marketer_profile_id", null: false
+    t.bigint "skill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["marketer_profile_id"], name: "index_marketer_skills_on_marketer_profile_id"
+    t.index ["skill_id"], name: "index_marketer_skills_on_skill_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -78,6 +115,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_19_225154) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "company_profiles", "accounts"
+  add_foreign_key "company_profiles", "locations"
+  add_foreign_key "marketer_profiles", "accounts"
+  add_foreign_key "marketer_profiles", "locations"
+  add_foreign_key "marketer_skills", "marketer_profiles"
+  add_foreign_key "marketer_skills", "skills"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
 end

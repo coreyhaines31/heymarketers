@@ -1,0 +1,133 @@
+<!-- Marketing Specialists Directory -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold mb-2" style="color: var(--color-foreground);">Find Your Perfect Marketing Expert</h1>
+      <p class="text-lg" style="color: var(--color-muted-foreground);">Browse our directory of <%= @marketer_profiles.total_count || MarketerProfile.count %> marketing professionals</p>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card mb-8">
+      <div class="card-body">
+        <%= form_with url: marketers_path, method: :get, local: true, class: "space-y-4" do |f| %>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            <!-- Skills Filter -->
+            <div>
+              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Skills</label>
+              <%= f.select :skill_ids,
+                  options_from_collection_for_select(@skills, :id, :name, params[:skill_ids]),
+                  { prompt: "All Skills" },
+                  { class: "input w-full", multiple: true } %>
+            </div>
+
+            <!-- Location Filter -->
+            <div>
+              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Location</label>
+              <%= f.select :location_id,
+                  options_from_collection_for_select(@locations, :id, :name, params[:location_id]),
+                  { prompt: "All Locations" },
+                  { class: "input w-full" } %>
+            </div>
+
+            <!-- Rate Range -->
+            <div>
+              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Hourly Rate</label>
+              <div class="flex space-x-2">
+                <%= f.number_field :min_rate, placeholder: "Min", value: params[:min_rate], class: "input w-full" %>
+                <%= f.number_field :max_rate, placeholder: "Max", value: params[:max_rate], class: "input w-full" %>
+              </div>
+            </div>
+
+            <!-- Search Button -->
+            <div class="flex items-end">
+              <%= f.submit "Filter", class: "btn btn-primary w-full" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <% if @marketer_profiles.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @marketer_profiles.each do |profile| %>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
+                  <%= profile.account.name.first(2).upcase %>
+                </div>
+                <div class="flex-1">
+                  <h3 class="font-semibold" style="color: var(--color-foreground);"><%= profile.account.name %></h3>
+                  <p class="text-sm" style="color: var(--color-muted-foreground);"><%= profile.title %></p>
+                  <% if profile.location %>
+                    <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">📍 <%= profile.location.name %></p>
+                  <% end %>
+                </div>
+                <div class="text-right">
+                  <p class="font-semibold" style="color: var(--color-foreground);"><%= profile.display_rate %></p>
+                </div>
+              </div>
+
+              <p class="text-sm mt-3" style="color: var(--color-muted-foreground);">
+                <%= truncate(profile.bio, length: 120) %>
+              </p>
+
+              <!-- Skills Tags -->
+              <% if profile.skills.any? %>
+                <div class="flex flex-wrap gap-2 mt-4">
+                  <% profile.skills.limit(3).each do |skill| %>
+                    <span class="badge badge-outline"><%= skill.name %></span>
+                  <% end %>
+                  <% if profile.skills.count > 3 %>
+                    <span class="badge badge-outline">+<%= profile.skills.count - 3 %> more</span>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="flex justify-between items-center mt-4">
+                <%= link_to "View Profile", marketer_path(profile), class: "btn btn-primary btn-sm" %>
+                <% if user_signed_in? && profile.account.users.include?(current_user) %>
+                  <%= link_to "Edit", edit_marketer_profile_path(profile), class: "btn btn-outline btn-sm" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-8 flex justify-center">
+        <%= paginate @marketer_profiles if respond_to?(:paginate) %>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background-color: var(--color-accent);">
+          <svg class="w-8 h-8" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium mb-2" style="color: var(--color-foreground);">No marketers found</h3>
+        <p class="text-sm mb-6" style="color: var(--color-muted-foreground);">Try adjusting your filters or browse all marketers</p>
+        <%= link_to "Clear Filters", marketers_path, class: "btn btn-outline" %>
+      </div>
+    <% end %>
+
+    <!-- Call to Action -->
+    <% if user_signed_in? && !current_user.marketer? %>
+      <div class="mt-12 text-center">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="text-lg font-semibold mb-2" style="color: var(--color-foreground);">Are you a marketing professional?</h3>
+            <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">Join our directory and connect with businesses looking for your expertise</p>
+            <%= link_to "Create Your Profile", new_marketer_profile_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

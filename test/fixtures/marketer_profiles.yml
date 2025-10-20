@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  title: MyString
+  bio: MyText
+  hourly_rate: 1
+  location: one
+  availability: MyString
+  portfolio_url: MyString
+  resume_attached: false
+
+two:
+  account: two
+  title: MyString
+  bio: MyText
+  hourly_rate: 1
+  location: two
+  availability: MyString
+  portfolio_url: MyString
+  resume_attached: false
