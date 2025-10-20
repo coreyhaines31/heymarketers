@@ -5,22 +5,26 @@ class MarketerProfilesController < ApplicationController
 
   # GET /marketers
   def index
-    @marketer_profiles = MarketerProfile.includes(:skills, :location, :account)
-                                       .page(params[:page])
-                                       .per(12)
+    search_service = MarketerSearchService.new(search_params)
+    search_service.search
 
-    # Apply filters
-    @marketer_profiles = @marketer_profiles.by_location(params[:location_id]) if params[:location_id].present?
-    @marketer_profiles = @marketer_profiles.by_rate_range(params[:min_rate], params[:max_rate]) if params[:min_rate].present? || params[:max_rate].present?
-
-    if params[:skill_ids].present?
-      skill_ids = params[:skill_ids].reject(&:blank?)
-      @marketer_profiles = @marketer_profiles.joins(:skills).where(skills: { id: skill_ids }).distinct
-    end
+    @marketer_profiles = search_service.results
+    @total_count = search_service.total_count
 
     # Load filter options
     @skills = Skill.order(:name)
     @locations = Location.order(:name)
+    @experience_levels = MarketerSearchService::VALID_EXPERIENCE_LEVELS
+    @sort_options = MarketerSearchService::VALID_SORTS
+    @availability_options = [
+      ['Available for new projects', 'available'],
+      ['Available part-time', 'part_time'],
+      ['Fully booked', 'booked'],
+      ['Not available', 'unavailable']
+    ]
+
+    # For filter persistence
+    @search_params = search_params
   end
 
   # GET /marketers/:id
@@ -85,8 +89,13 @@ class MarketerProfilesController < ApplicationController
 
   def marketer_profile_params
     params.require(:marketer_profile).permit(:title, :bio, :hourly_rate, :portfolio_url,
-                                            :availability, :location_id, :resume,
-                                            :profile_photo, skill_ids: [])
+                                            :availability, :location_id, :experience_level,
+                                            :resume, :profile_photo, skill_ids: [])
+  end
+
+  def search_params
+    params.permit(:query, :location_id, :min_rate, :max_rate, :availability,
+                  :experience_level, :sort, :page, :per_page, skill_ids: [])
   end
 
   def create_user_account

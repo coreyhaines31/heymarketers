@@ -7,14 +7,20 @@
       <div class="flex items-center justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Find Your Perfect Marketing Expert</h1>
-          <p class="mt-1" style="color: var(--color-muted-foreground);">Browse our directory of <%= @marketer_profiles.total_count || MarketerProfile.count %> marketing professionals</p>
+          <p class="mt-1" style="color: var(--color-muted-foreground);">
+            <% if @search_params[:query].present? %>
+              Found <%= @total_count %> marketing professionals for "<%= @search_params[:query] %>"
+            <% else %>
+              Browse our directory of <%= @total_count %> marketing professionals
+            <% end %>
+          </p>
         </div>
         <div class="flex items-center space-x-3">
-          <button class="btn btn-outline">
+          <button id="toggle-advanced-filters" class="btn btn-outline">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
             </svg>
-            Advanced Filters
+            <span class="filter-text">Advanced Filters</span>
           </button>
           <% if user_signed_in? && !current_user.marketer? %>
             <%= link_to new_marketer_profile_path, class: "btn btn-primary" do %>
@@ -31,41 +37,127 @@
     <!-- Search & Filters -->
     <div class="card mb-8">
       <div class="card-body">
-        <%= form_with url: marketers_path, method: :get, local: true, class: "space-y-4" do |f| %>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <%= form_with url: marketers_path, method: :get, local: true, class: "space-y-6", id: "search-form" do |f| %>
 
-            <!-- Skills Filter -->
-            <div>
-              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Skills</label>
-              <%= f.select :skill_ids,
-                  options_from_collection_for_select(@skills, :id, :name, params[:skill_ids]),
-                  { prompt: "All Skills" },
-                  { class: "input w-full", multiple: true } %>
+          <!-- Main Search Bar -->
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <%= f.text_field :query,
+                  placeholder: "Search by name, skills, or expertise...",
+                  value: @search_params[:query],
+                  class: "input w-full text-lg",
+                  autocomplete: "off" %>
             </div>
-
-            <!-- Location Filter -->
-            <div>
-              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Location</label>
-              <%= f.select :location_id,
-                  options_from_collection_for_select(@locations, :id, :name, params[:location_id]),
-                  { prompt: "All Locations" },
-                  { class: "input w-full" } %>
-            </div>
-
-            <!-- Rate Range -->
-            <div>
-              <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Hourly Rate</label>
-              <div class="flex space-x-2">
-                <%= f.number_field :min_rate, placeholder: "Min", value: params[:min_rate], class: "input w-full" %>
-                <%= f.number_field :max_rate, placeholder: "Max", value: params[:max_rate], class: "input w-full" %>
-              </div>
-            </div>
-
-            <!-- Search Button -->
-            <div class="flex items-end">
-              <%= f.submit "Filter", class: "btn btn-primary w-full" %>
+            <div class="flex items-center space-x-2">
+              <%= f.select :sort,
+                  options_for_select(@sort_options.map { |s| [s.humanize, s] }, @search_params[:sort]),
+                  { prompt: "Sort by..." },
+                  { class: "input" } %>
+              <%= f.submit "Search", class: "btn btn-primary px-6" %>
             </div>
           </div>
+
+          <!-- Quick Filters -->
+          <div class="flex flex-wrap gap-3">
+            <% if @search_params.any? { |k, v| v.present? && k != 'query' && k != 'sort' } %>
+              <%= link_to "Clear Filters", marketers_path, class: "btn btn-outline btn-sm" %>
+            <% end %>
+
+            <!-- Active Filter Tags -->
+            <% if @search_params[:location_id].present? %>
+              <% location = @locations.find { |l| l.id.to_s == @search_params[:location_id].to_s } %>
+              <% if location %>
+                <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                  📍 <%= location.name %>
+                  <%= link_to marketers_path(@search_params.except(:location_id)), class: "ml-2 hover:text-red-600" do %>
+                    ×
+                  <% end %>
+                </span>
+              <% end %>
+            <% end %>
+
+            <% if @search_params[:experience_level].present? %>
+              <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                🎯 <%= @search_params[:experience_level].humanize %>
+                <%= link_to marketers_path(@search_params.except(:experience_level)), class: "ml-2 hover:text-red-600" do %>
+                  ×
+                <% end %>
+              </span>
+            <% end %>
+
+            <% if @search_params[:min_rate].present? || @search_params[:max_rate].present? %>
+              <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                💰 $<%= @search_params[:min_rate] || '0' %> - $<%= @search_params[:max_rate] || '∞' %>/hr
+                <%= link_to marketers_path(@search_params.except(:min_rate, :max_rate)), class: "ml-2 hover:text-red-600" do %>
+                  ×
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+
+          <!-- Advanced Filters Panel -->
+          <div id="advanced-filters" class="border-t pt-6" style="border-color: var(--color-border); display: none;">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+              <!-- Skills Filter -->
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Skills</label>
+                <%= f.select :skill_ids,
+                    options_from_collection_for_select(@skills, :id, :name, @search_params[:skill_ids]),
+                    { prompt: "All Skills" },
+                    { class: "input w-full", multiple: true } %>
+              </div>
+
+              <!-- Location Filter -->
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Location</label>
+                <%= f.select :location_id,
+                    options_from_collection_for_select(@locations, :id, :name, @search_params[:location_id]),
+                    { prompt: "All Locations" },
+                    { class: "input w-full" } %>
+              </div>
+
+              <!-- Experience Level -->
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Experience Level</label>
+                <%= f.select :experience_level,
+                    options_for_select(@experience_levels.map { |level| [level.humanize, level] }, @search_params[:experience_level]),
+                    { prompt: "Any Level" },
+                    { class: "input w-full" } %>
+              </div>
+
+              <!-- Availability -->
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Availability</label>
+                <%= f.select :availability,
+                    options_for_select(@availability_options, @search_params[:availability]),
+                    { prompt: "Any Availability" },
+                    { class: "input w-full" } %>
+              </div>
+
+              <!-- Rate Range -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Hourly Rate</label>
+                <div class="flex space-x-2">
+                  <%= f.number_field :min_rate,
+                      placeholder: "Min ($)",
+                      value: @search_params[:min_rate],
+                      class: "input w-full" %>
+                  <%= f.number_field :max_rate,
+                      placeholder: "Max ($)",
+                      value: @search_params[:max_rate],
+                      class: "input w-full" %>
+                </div>
+              </div>
+
+              <!-- Filter Actions -->
+              <div class="flex items-end space-x-2">
+                <%= f.submit "Apply Filters", class: "btn btn-primary" %>
+                <%= link_to "Reset", marketers_path, class: "btn btn-outline" %>
+              </div>
+            </div>
+          </div>
+
         <% end %>
       </div>
     </div>
@@ -131,7 +223,7 @@
 
       <!-- Pagination -->
       <div class="mt-8 flex justify-center">
-        <%= paginate @marketer_profiles if respond_to?(:paginate) %>
+        <%= paginate @marketer_profiles, params: @search_params %>
       </div>
     <% else %>
       <!-- Empty State -->
@@ -161,3 +253,64 @@
     <% end %>
   </div>
 </div>
+
+<!-- JavaScript for Advanced Search Functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Advanced Filters Toggle
+  const toggleButton = document.getElementById('toggle-advanced-filters');
+  const advancedFilters = document.getElementById('advanced-filters');
+  const filterText = toggleButton.querySelector('.filter-text');
+
+  if (toggleButton && advancedFilters) {
+    toggleButton.addEventListener('click', function() {
+      const isVisible = advancedFilters.style.display !== 'none';
+
+      if (isVisible) {
+        advancedFilters.style.display = 'none';
+        filterText.textContent = 'Advanced Filters';
+      } else {
+        advancedFilters.style.display = 'block';
+        filterText.textContent = 'Hide Filters';
+      }
+    });
+
+    // Show advanced filters if any advanced filters are active
+    const hasAdvancedFilters = <%= (@search_params[:skill_ids].present? ||
+                                   @search_params[:experience_level].present? ||
+                                   @search_params[:availability].present? ||
+                                   @search_params[:min_rate].present? ||
+                                   @search_params[:max_rate].present?).to_json %>;
+
+    if (hasAdvancedFilters) {
+      advancedFilters.style.display = 'block';
+      filterText.textContent = 'Hide Filters';
+    }
+  }
+
+  // Auto-submit form on sort change
+  const sortSelect = document.querySelector('select[name="sort"]');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      this.form.submit();
+    });
+  }
+
+  // Real-time search with debouncing
+  const searchInput = document.querySelector('input[name="query"]');
+  if (searchInput) {
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(() => {
+        // Only auto-submit if user has typed at least 3 characters or cleared the field
+        if (this.value.length >= 3 || this.value.length === 0) {
+          this.form.submit();
+        }
+      }, 500); // 500ms delay
+    });
+  }
+});
+</script>

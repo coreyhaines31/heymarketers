@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'dashboard/index'
+  get 'dashboard/analytics'
+  get 'dashboard/profile_stats'
+  get 'dashboard/job_stats'
   devise_for :users
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -18,9 +22,14 @@ Rails.application.routes.draw do
   get "marketers", to: "marketer_profiles#index"
   get "marketers/:id", to: "marketer_profiles#show", as: :marketer
 
-  # Messages for specific marketer profiles
+  # Messages and reviews for specific marketer profiles
   resources :marketer_profiles, except: [:index, :show] do
     resources :messages, only: [:new, :create]
+    resources :reviews do
+      member do
+        post :vote
+      end
+    end
   end
 
   # General message management
@@ -37,6 +46,17 @@ Rails.application.routes.draw do
 
   # Other resources
   resources :skills, only: :index
+
+  # Notifications
+  resources :notifications, only: [:index, :show] do
+    member do
+      patch :mark_as_read
+    end
+    collection do
+      patch :mark_all_as_read
+      get :unread_count
+    end
+  end
 
   # Programmatic SEO pages
   get ":skill_slug-marketers", to: "seo#skills", as: :skill_marketers, constraints: { skill_slug: /[a-z0-9\-]+/ }

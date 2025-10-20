@@ -1,6 +1,8 @@
 class JobListing < ApplicationRecord
   belongs_to :company_profile
   belongs_to :location, optional: true
+  has_many :analytics_events, as: :trackable, dependent: :destroy
+  has_many :favorites, as: :favoritable, dependent: :destroy
 
   validates :title, presence: true, length: { minimum: 5, maximum: 100 }
   validates :description, presence: true, length: { minimum: 50, maximum: 5000 }
@@ -15,6 +17,44 @@ class JobListing < ApplicationRecord
   scope :by_location, ->(location_id) { where(location_id: location_id) if location_id.present? }
   scope :remote_friendly, -> { where(remote_ok: true) }
   scope :by_employment_type, ->(type) { where(employment_type: type) if type.present? }
+  scope :by_salary_range, ->(min_salary, max_salary) do
+    scope = all
+    if min_salary.present?
+      scope = scope.where('salary_min >= ? OR salary_max >= ?', min_salary, min_salary)
+    end
+    if max_salary.present?
+      scope = scope.where('salary_max <= ? OR (salary_min <= ? AND salary_max IS NULL)', max_salary, max_salary)
+    end
+    scope
+  end
+  scope :posted_within, ->(timeframe) do
+    case timeframe
+    when 'day'
+      where('posted_at >= ?', 1.day.ago)
+    when 'week'
+      where('posted_at >= ?', 1.week.ago)
+    when 'month'
+      where('posted_at >= ?', 1.month.ago)
+    else
+      all
+    end
+  end
+
+  # Search functionality
+  def self.search(query)
+    return all if query.blank?
+
+    sanitized_query = query.gsub(/[^\w\s]/, ' ').strip.squeeze(' ')
+    where("search_vector @@ plainto_tsquery('english', ?)", sanitized_query)
+  end
+
+  def self.search_with_rank(query)
+    return all if query.blank?
+
+    sanitized_query = query.gsub(/[^\w\s]/, ' ').strip.squeeze(' ')
+    where("search_vector @@ plainto_tsquery('english', ?)", sanitized_query)
+      .order("ts_rank(search_vector, plainto_tsquery('english', ?)) DESC", sanitized_query)
+  end
 
   before_create :set_posted_at
 
@@ -40,6 +80,16 @@ class JobListing < ApplicationRecord
 
   def slug
     "#{title.parameterize}-#{id}"
+  end
+
+  # Favorites methods
+  def favorites_count
+    favorites.count
+  end
+
+  def favorited_by?(user)
+    return false unless user
+    favorites.exists?(user: user)
   end
 
   private

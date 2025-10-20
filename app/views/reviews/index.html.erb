@@ -1,0 +1,237 @@
+<!-- Reviews for Marketer Profile -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <%= link_to @marketer_profile, class: "btn btn-outline" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Profile
+        <% end %>
+        <% if @marketer_profile.can_be_reviewed_by?(current_user) %>
+          <%= link_to new_marketer_profile_review_path(@marketer_profile), class: "btn btn-primary" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Write a Review
+          <% end %>
+        <% end %>
+      </div>
+
+      <h1 class="text-2xl font-bold mb-2" style="color: var(--color-foreground);">
+        Reviews for <%= @marketer_profile.account.name %>
+      </h1>
+      <p class="text-sm" style="color: var(--color-muted-foreground);"><%= @marketer_profile.title %></p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Rating Summary Sidebar -->
+      <div class="space-y-6">
+        <!-- Overall Rating -->
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="text-4xl font-bold mb-2" style="color: var(--color-foreground);"><%= @average_rating %></div>
+            <div class="flex justify-center mb-2">
+              <% 5.times do |i| %>
+                <svg class="w-5 h-5 <%= @marketer_profile.star_rating > i ? 'text-yellow-400' : 'text-gray-300' %> fill-current" viewBox="0 0 20 20">
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                </svg>
+              <% end %>
+            </div>
+            <p class="text-sm" style="color: var(--color-muted-foreground);">
+              Based on <%= @total_reviews %> review<%= 's' if @total_reviews != 1 %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Rating Distribution -->
+        <% if @total_reviews > 0 %>
+          <div class="card">
+            <div class="card-body">
+              <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Rating Distribution</h3>
+              <div class="space-y-2">
+                <% @rating_distribution.reverse.each do |rating, count| %>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm w-8" style="color: var(--color-foreground);"><%= rating %>★</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                      <div class="bg-yellow-400 h-2 rounded-full" style="width: <%= @marketer_profile.rating_percentage(rating) %>%"></div>
+                    </div>
+                    <span class="text-xs w-8 text-right" style="color: var(--color-muted-foreground);"><%= count %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Quick Stats -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Quick Stats</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Total Reviews</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @total_reviews %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Average Rating</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @average_rating %>/5</span>
+              </div>
+              <% if @total_reviews > 0 %>
+                <div class="flex justify-between">
+                  <span class="text-sm" style="color: var(--color-muted-foreground);">Latest Review</span>
+                  <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @reviews.first.time_ago %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews List -->
+      <div class="lg:col-span-2 space-y-6">
+        <% if @reviews.any? %>
+          <% @reviews.each do |review| %>
+            <div class="card">
+              <div class="card-body">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-start space-x-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm" style="background-color: var(--color-primary);">
+                      <%= review.reviewer_initials %>
+                    </div>
+                    <div>
+                      <h4 class="font-semibold" style="color: var(--color-foreground);"><%= review.display_reviewer_name %></h4>
+                      <div class="flex items-center space-x-2 text-sm" style="color: var(--color-muted-foreground);">
+                        <span><%= review.time_ago %></span>
+                        <% if review.verified_client? %>
+                          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                            ✓ Verified Client
+                          </span>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-1">
+                    <% review.rating.times do %>
+                      <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                      </svg>
+                    <% end %>
+                    <% (5 - review.rating).times do %>
+                      <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                      </svg>
+                    <% end %>
+                  </div>
+                </div>
+
+                <h5 class="font-medium mb-2" style="color: var(--color-foreground);"><%= review.title %></h5>
+                <p class="text-sm leading-relaxed mb-4" style="color: var(--color-muted-foreground);">
+                  <%= simple_format(review.content) %>
+                </p>
+
+                <!-- Review Actions -->
+                <div class="flex items-center justify-between pt-3 border-t" style="border-color: var(--color-border);">
+                  <div class="flex items-center space-x-4">
+                    <% if user_signed_in? %>
+                      <button class="review-helpful-btn flex items-center space-x-1 text-sm <%= review.helpful_for_user?(current_user) ? 'text-blue-600' : 'text-gray-500' %> hover:text-blue-600 transition-colors"
+                              data-review-id="<%= review.id %>"
+                              data-helpful="<%= review.helpful_for_user?(current_user) %>">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 9v11m-5-9h2.5a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v3a2 2 0 002 2z" />
+                        </svg>
+                        <span class="helpful-text">
+                          <%= review.helpful_for_user?(current_user) ? 'Helpful' : 'Was this helpful?' %>
+                        </span>
+                        <span class="helpful-count">(<%= review.helpful_count %>)</span>
+                      </button>
+                    <% else %>
+                      <span class="text-sm" style="color: var(--color-muted-foreground);">
+                        <%= review.helpful_count %> found this helpful
+                      </span>
+                    <% end %>
+
+                    <%= link_to "View", [@marketer_profile, review], class: "text-sm hover:underline", style: "color: var(--color-primary);" %>
+                  </div>
+
+                  <% if user_signed_in? && review.reviewer == current_user %>
+                    <div class="flex items-center space-x-2">
+                      <%= link_to "Edit", edit_marketer_profile_review_path(@marketer_profile, review), class: "text-sm hover:underline", style: "color: var(--color-primary);" %>
+                      <%= link_to "Delete", [@marketer_profile, review], method: :delete,
+                          data: { confirm: "Are you sure you want to delete this review?" },
+                          class: "text-sm hover:underline text-red-600" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <!-- Empty State -->
+          <div class="text-center py-12">
+            <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background-color: var(--color-accent);">
+              <svg class="w-8 h-8" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium mb-2" style="color: var(--color-foreground);">No reviews yet</h3>
+            <p class="text-sm mb-6" style="color: var(--color-muted-foreground);">Be the first to review <%= @marketer_profile.account.name %>'s work</p>
+            <% if @marketer_profile.can_be_reviewed_by?(current_user) %>
+              <%= link_to "Write the First Review", new_marketer_profile_review_path(@marketer_profile), class: "btn btn-primary" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle helpful voting with AJAX
+  document.querySelectorAll('.review-helpful-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      const reviewId = this.dataset.reviewId;
+      const isCurrentlyHelpful = this.dataset.helpful === 'true';
+
+      fetch(`/marketer_profiles/<%= @marketer_profile.id %>/reviews/${reviewId}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Update the button state
+        this.dataset.helpful = data.user_voted.toString();
+
+        // Update the text and count
+        const helpfulText = this.querySelector('.helpful-text');
+        const helpfulCount = this.querySelector('.helpful-count');
+
+        helpfulText.textContent = data.user_voted ? 'Helpful' : 'Was this helpful?';
+        helpfulCount.textContent = `(${data.helpful_count})`;
+
+        // Update the color
+        if (data.user_voted) {
+          this.classList.remove('text-gray-500');
+          this.classList.add('text-blue-600');
+        } else {
+          this.classList.remove('text-blue-600');
+          this.classList.add('text-gray-500');
+        }
+      })
+      .catch(error => {
+        console.error('Error voting on review:', error);
+      });
+    });
+  });
+});
+</script>

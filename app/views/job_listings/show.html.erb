@@ -1,2 +1,331 @@
-<h1>JobListings#show</h1>
-<p>Find me in app/views/job_listings/show.html.erb</p>
+<!-- Job Listing Detail -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header with Navigation -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <%= link_to jobs_path, class: "btn btn-outline" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Jobs
+        <% end %>
+        <div class="flex items-center space-x-2">
+          <% if user_signed_in? %>
+            <button class="btn btn-outline" onclick="navigator.share ? navigator.share({title: '<%= @job_listing.title %>', url: window.location.href}) : copyToClipboard(window.location.href)">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+              </svg>
+              Share
+            </button>
+            <button class="btn btn-outline" onclick="toggleSaveJob()">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              Save Job
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Header Card -->
+    <div class="card mb-8">
+      <div class="card-body">
+        <div class="flex items-start space-x-6">
+          <div class="w-16 h-16 rounded-lg flex items-center justify-center text-white font-bold text-xl" style="background-color: var(--color-primary);">
+            <%= @job_listing.company_profile.name.first(2).upcase %>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-start justify-between">
+              <div>
+                <h1 class="text-3xl font-bold mb-2" style="color: var(--color-foreground);"><%= @job_listing.title %></h1>
+                <div class="flex items-center space-x-4 text-sm" style="color: var(--color-muted-foreground);">
+                  <span class="font-medium"><%= @job_listing.company_profile.name %></span>
+                  <% if @job_listing.location %>
+                    <span>📍 <%= @job_listing.location.name %></span>
+                  <% end %>
+                  <% if @job_listing.remote_ok %>
+                    <span>🏠 Remote OK</span>
+                  <% end %>
+                  <span>📅 Posted <%= time_ago_in_words(@job_listing.posted_at) %> ago</span>
+                </div>
+                <div class="flex items-center space-x-3 mt-3">
+                  <span class="badge badge-primary"><%= @job_listing.employment_type_display %></span>
+                  <% if @job_listing.company_profile.company_size %>
+                    <span class="badge badge-outline"><%= @job_listing.company_profile.company_size.humanize %></span>
+                  <% end %>
+                  <% if @job_listing.expires_at %>
+                    <span class="text-xs" style="color: var(--color-muted-foreground);">
+                      Expires <%= @job_listing.expires_at.strftime("%B %d, %Y") %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-2xl font-bold mb-2" style="color: var(--color-foreground);"><%= @job_listing.display_salary %></p>
+                <% if @job_listing.active? %>
+                  <% if user_signed_in? %>
+                    <button class="btn btn-primary btn-lg" onclick="openApplyModal()">Apply Now</button>
+                  <% else %>
+                    <%= link_to "Sign In to Apply", new_user_session_path, class: "btn btn-primary btn-lg" %>
+                  <% end %>
+                <% else %>
+                  <span class="btn btn-outline btn-lg opacity-50 cursor-not-allowed">No Longer Available</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Job Description -->
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Job Description</h2>
+            <div class="prose max-w-none" style="color: var(--color-foreground);">
+              <%= simple_format(@job_listing.description) %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Information -->
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">About <%= @job_listing.company_profile.name %></h2>
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
+                <%= @job_listing.company_profile.name.first(2).upcase %>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold mb-2" style="color: var(--color-foreground);"><%= @job_listing.company_profile.name %></h3>
+                <p class="text-sm mb-3" style="color: var(--color-muted-foreground);"><%= @job_listing.company_profile.description %></p>
+                <div class="flex items-center space-x-4 text-sm" style="color: var(--color-muted-foreground);">
+                  <% if @job_listing.company_profile.company_size %>
+                    <span>👥 <%= @job_listing.company_profile.company_size.humanize %> company</span>
+                  <% end %>
+                  <% if @job_listing.company_profile.location %>
+                    <span>📍 Headquarters: <%= @job_listing.company_profile.location.name %></span>
+                  <% end %>
+                  <% if @job_listing.company_profile.website %>
+                    <%= link_to @job_listing.company_profile.website, @job_listing.company_profile.website, target: "_blank", class: "hover:underline" do %>
+                      🌐 Website
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Similar Jobs -->
+        <% similar_jobs = JobListing.active.where.not(id: @job_listing.id)
+                                     .joins(:company_profile)
+                                     .where(employment_type: @job_listing.employment_type)
+                                     .limit(3) %>
+        <% if similar_jobs.any? %>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Similar Jobs</h2>
+              <div class="space-y-4">
+                <% similar_jobs.each do |job| %>
+                  <div class="flex items-center justify-between p-4 rounded-lg border" style="border-color: var(--color-border);">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-semibold text-sm" style="background-color: var(--color-primary);">
+                        <%= job.company_profile.name.first(2).upcase %>
+                      </div>
+                      <div>
+                        <h4 class="font-medium" style="color: var(--color-foreground);"><%= job.title %></h4>
+                        <p class="text-sm" style="color: var(--color-muted-foreground);"><%= job.company_profile.name %></p>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                      <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= job.display_salary %></span>
+                      <%= link_to "View", job_path(job), class: "btn btn-outline btn-sm" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+
+        <!-- Job Details -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Job Details</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Employment Type</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.employment_type_display %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Salary</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.display_salary %></span>
+              </div>
+              <% if @job_listing.location %>
+                <div class="flex justify-between">
+                  <span class="text-sm" style="color: var(--color-muted-foreground);">Location</span>
+                  <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.location.name %></span>
+                </div>
+              <% end %>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Remote Work</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);">
+                  <%= @job_listing.remote_ok? ? "Available" : "Not Available" %>
+                </span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Posted</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.posted_at.strftime("%B %d, %Y") %></span>
+              </div>
+              <% if @job_listing.expires_at %>
+                <div class="flex justify-between">
+                  <span class="text-sm" style="color: var(--color-muted-foreground);">Expires</span>
+                  <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.expires_at.strftime("%B %d, %Y") %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Stats -->
+        <% if @job_listing.company_profile.job_listings.active.count > 1 %>
+          <div class="card">
+            <div class="card-body">
+              <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Company Stats</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-sm" style="color: var(--color-muted-foreground);">Open Positions</span>
+                  <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.company_profile.job_listings.active.count %></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm" style="color: var(--color-muted-foreground);">Company Size</span>
+                  <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.company_profile.company_size&.humanize || "Not specified" %></span>
+                </div>
+              </div>
+              <%= link_to "View All Jobs", jobs_path(company_profile_id: @job_listing.company_profile.id), class: "btn btn-outline w-full mt-4" %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Apply Section -->
+        <% if @job_listing.active? %>
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="font-semibold mb-3" style="color: var(--color-foreground);">Ready to Apply?</h3>
+              <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">Join <%= @job_listing.company_profile.name %> and make an impact in their marketing team.</p>
+              <% if user_signed_in? %>
+                <button class="btn btn-primary w-full" onclick="openApplyModal()">Apply for this Position</button>
+              <% else %>
+                <%= link_to "Sign In to Apply", new_user_session_path, class: "btn btn-primary w-full" %>
+                <p class="text-xs mt-2" style="color: var(--color-muted-foreground);">
+                  Don't have an account? <%= link_to "Sign up", new_user_registration_path, class: "hover:underline" %>
+                </p>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="font-semibold mb-3" style="color: var(--color-foreground);">Position No Longer Available</h3>
+              <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">This position is no longer accepting applications.</p>
+              <%= link_to "Browse Similar Jobs", jobs_path(employment_type: @job_listing.employment_type), class: "btn btn-outline w-full" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if user_signed_in? && @job_listing.active? %>
+  <!-- Apply Modal -->
+  <div id="apply-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="card max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div class="card-body">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold" style="color: var(--color-foreground);">Apply for <%= @job_listing.title %></h3>
+          <button onclick="closeApplyModal()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <%= form_with url: "#", local: true, class: "space-y-4" do |f| %>
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Cover Letter</label>
+            <%= f.text_area :cover_letter, rows: 6, placeholder: "Tell them why you're interested in this position and how your skills match their needs...", class: "input w-full", required: true %>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Resume</label>
+            <%= f.file_field :resume, accept: ".pdf,.doc,.docx", class: "input w-full" %>
+            <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">Upload your resume (PDF preferred)</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Portfolio (Optional)</label>
+            <%= f.url_field :portfolio_url, placeholder: "https://yourportfolio.com", class: "input w-full" %>
+          </div>
+
+          <div class="flex items-center">
+            <input type="checkbox" id="terms" required class="mr-2">
+            <label for="terms" class="text-sm" style="color: var(--color-foreground);">
+              I agree to the terms and conditions and allow <%= @job_listing.company_profile.name %> to contact me regarding this application.
+            </label>
+          </div>
+
+          <div class="flex space-x-3 pt-4">
+            <button type="button" onclick="closeApplyModal()" class="btn btn-outline flex-1">Cancel</button>
+            <%= f.submit "Submit Application", class: "btn btn-primary flex-1" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+function openApplyModal() {
+  document.getElementById('apply-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeApplyModal() {
+  document.getElementById('apply-modal').classList.add('hidden');
+  document.body.style.overflow = 'auto';
+}
+
+function toggleSaveJob() {
+  // TODO: Implement save job functionality
+  const button = event.target;
+  button.innerHTML = button.innerHTML.includes('❤️') ?
+    '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>Save Job' :
+    '❤️ Saved';
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Link copied to clipboard!');
+  });
+}
+
+// Close modal when clicking outside
+document.getElementById('apply-modal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeApplyModal();
+  }
+});
+</script>

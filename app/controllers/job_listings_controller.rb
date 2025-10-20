@@ -5,22 +5,26 @@ class JobListingsController < ApplicationController
   before_action :ensure_company_owner, only: [:new, :create, :edit, :update, :destroy]
 
   def index
-    @job_listings = JobListing.active
-                              .includes(:company_profile, :location)
-                              .recent
-                              .page(params[:page])
+    search_service = JobSearchService.new(search_params)
+    search_service.search
 
-    # Filter by location if provided
-    @job_listings = @job_listings.by_location(params[:location_id]) if params[:location_id].present?
+    @job_listings = search_service.results
+    @total_count = search_service.total_count
 
-    # Filter by employment type if provided
-    @job_listings = @job_listings.by_employment_type(params[:employment_type]) if params[:employment_type].present?
-
-    # Filter by remote-friendly if requested
-    @job_listings = @job_listings.remote_friendly if params[:remote_ok] == 'true'
-
+    # Load filter options
     @locations = Location.ordered
-    @employment_types = JobListing.distinct.pluck(:employment_type).compact
+    @employment_types = JobSearchService::VALID_EMPLOYMENT_TYPES
+    @company_sizes = JobSearchService::VALID_COMPANY_SIZES
+    @sort_options = JobSearchService::VALID_SORTS
+    @posted_within_options = [
+      ['Any time', ''],
+      ['Last 24 hours', 'day'],
+      ['Last week', 'week'],
+      ['Last month', 'month']
+    ]
+
+    # For filter persistence
+    @search_params = search_params
   end
 
   def show
@@ -84,5 +88,10 @@ class JobListingsController < ApplicationController
   def job_listing_params
     params.require(:job_listing).permit(:title, :description, :location_id, :employment_type,
                                        :salary_min, :salary_max, :remote_ok, :expires_at)
+  end
+
+  def search_params
+    params.permit(:query, :location_id, :employment_type, :remote_ok, :min_salary, :max_salary,
+                  :posted_within, :company_size, :sort, :page, :per_page, employment_types: [])
   end
 end

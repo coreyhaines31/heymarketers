@@ -38,6 +38,24 @@
               </div>
 
               <div>
+                <label for="marketer_profile_experience_level" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Experience Level
+                </label>
+                <%= f.select :experience_level,
+                    options_for_select([
+                      ['Junior (0-2 years)', 'junior'],
+                      ['Mid-level (2-5 years)', 'mid'],
+                      ['Senior (5-10 years)', 'senior'],
+                      ['Expert (10+ years)', 'expert']
+                    ], @marketer_profile.experience_level),
+                    { prompt: "Select your experience level" },
+                    { class: "input w-full" } %>
+                <% if @marketer_profile.errors[:experience_level].any? %>
+                  <p class="text-sm mt-1" style="color: var(--color-destructive);"><%= @marketer_profile.errors[:experience_level].first %></p>
+                <% end %>
+              </div>
+
+              <div>
                 <label for="marketer_profile_hourly_rate" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
                   Hourly Rate (USD) *
                 </label>

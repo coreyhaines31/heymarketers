@@ -7,8 +7,10 @@ class CompanyProfile < ApplicationRecord
 
   validates :name, presence: true
   validates :description, presence: true
+  validates :company_size, inclusion: { in: %w[startup small medium large enterprise], allow_blank: true }
 
   scope :with_active_jobs, -> { joins(:job_listings).where(job_listings: { status: 'active' }).distinct }
+  scope :by_company_size, ->(size) { where(company_size: size) if size.present? }
 
   def slug
     "#{name.parameterize}-#{id}"
@@ -16,5 +18,9 @@ class CompanyProfile < ApplicationRecord
 
   def active_job_count
     job_listings.active.count
+  end
+
+  def company_size_display
+    company_size&.humanize || 'Not specified'
   end
 end
