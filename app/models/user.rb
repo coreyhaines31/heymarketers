@@ -8,6 +8,7 @@ class User < ApplicationRecord
   # Relationships will be added here
   has_many :memberships, dependent: :destroy
   has_many :accounts, through: :memberships
+  has_many :sent_messages, class_name: 'Message', foreign_key: 'sender_id', dependent: :destroy
 
   def marketer?
     accounts.joins(:marketer_profile).exists?

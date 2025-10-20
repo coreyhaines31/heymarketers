@@ -4,6 +4,7 @@ class MarketerProfile < ApplicationRecord
 
   has_many :marketer_skills, dependent: :destroy
   has_many :skills, through: :marketer_skills
+  has_many :messages, dependent: :destroy
 
   has_one_attached :resume
   has_one_attached :profile_photo

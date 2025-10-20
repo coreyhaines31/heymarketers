@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_20_041846) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_20_044913) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_041846) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_company_profiles_on_account_id"
     t.index ["location_id"], name: "index_company_profiles_on_location_id"
+  end
+
+  create_table "job_listings", force: :cascade do |t|
+    t.bigint "company_profile_id", null: false
+    t.string "title"
+    t.text "description"
+    t.bigint "location_id"
+    t.string "employment_type"
+    t.integer "salary_min"
+    t.integer "salary_max"
+    t.boolean "remote_ok", default: false
+    t.datetime "posted_at"
+    t.datetime "expires_at"
+    t.string "status", default: "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_profile_id"], name: "index_job_listings_on_company_profile_id"
+    t.index ["location_id"], name: "index_job_listings_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -77,6 +95,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_041846) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.bigint "sender_id", null: false
+    t.bigint "marketer_profile_id", null: false
+    t.string "subject"
+    t.text "body"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["marketer_profile_id"], name: "index_messages_on_marketer_profile_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
   create_table "service_types", force: :cascade do |t|
     t.string "name"
     t.string "slug"
@@ -117,10 +147,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_041846) do
 
   add_foreign_key "company_profiles", "accounts"
   add_foreign_key "company_profiles", "locations"
+  add_foreign_key "job_listings", "company_profiles"
+  add_foreign_key "job_listings", "locations"
   add_foreign_key "marketer_profiles", "accounts"
   add_foreign_key "marketer_profiles", "locations"
   add_foreign_key "marketer_skills", "marketer_profiles"
   add_foreign_key "marketer_skills", "skills"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
+  add_foreign_key "messages", "marketer_profiles"
+  add_foreign_key "messages", "users", column: "sender_id"
 end

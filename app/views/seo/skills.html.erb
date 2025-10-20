@@ -1,0 +1,127 @@
+<!-- SEO: Skill-based Landing Page -->
+<% content_for :title, @meta_title %>
+<% content_for :description, @meta_description %>
+
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold mb-4" style="color: var(--color-foreground);">
+        Top <%= @skill.name %> Marketers
+      </h1>
+      <p class="text-xl mb-8 max-w-3xl mx-auto" style="color: var(--color-muted-foreground);">
+        Connect with verified <%= @skill.name %> specialists. Browse portfolios, rates, and reviews to find the perfect marketer for your <%= @skill.name.downcase %> projects.
+      </p>
+
+      <!-- CTA Section -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to "Browse All Marketers", marketers_path, class: "btn btn-outline" %>
+        <% if user_signed_in? %>
+          <%= link_to "Create Your Profile", new_marketer_profile_path, class: "btn btn-primary" %>
+        <% else %>
+          <%= link_to "Join as a Marketer", new_user_registration_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="text-center p-6 rounded-lg" style="background-color: var(--color-accent);">
+        <div class="text-2xl font-bold mb-2" style="color: var(--color-primary);"><%= @marketers.count %>+</div>
+        <div class="text-sm" style="color: var(--color-accent-foreground);">Verified <%= @skill.name %> Experts</div>
+      </div>
+      <div class="text-center p-6 rounded-lg" style="background-color: var(--color-accent);">
+        <div class="text-2xl font-bold mb-2" style="color: var(--color-primary);">5.0★</div>
+        <div class="text-sm" style="color: var(--color-accent-foreground);">Average Client Rating</div>
+      </div>
+      <div class="text-center p-6 rounded-lg" style="background-color: var(--color-accent);">
+        <div class="text-2xl font-bold mb-2" style="color: var(--color-primary);">24h</div>
+        <div class="text-sm" style="color: var(--color-accent-foreground);">Average Response Time</div>
+      </div>
+    </div>
+
+    <!-- Marketers List -->
+    <% if @marketers.any? %>
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-6" style="color: var(--color-foreground);">
+          <%= @skill.name %> Specialists Available for Hire
+        </h2>
+
+        <!-- Marketers Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @marketers.each do |marketer| %>
+            <div class="card hover:shadow-lg transition-shadow">
+              <div class="card-body">
+                <!-- Profile Header -->
+                <div class="flex items-center space-x-4 mb-4">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--color-primary);">
+                    <%= marketer.account.name.first(2).upcase %>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold" style="color: var(--color-foreground);"><%= marketer.account.name %></h3>
+                    <p class="text-sm" style="color: var(--color-muted-foreground);"><%= marketer.title %></p>
+                  </div>
+                </div>
+
+                <!-- Bio -->
+                <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">
+                  <%= truncate(marketer.bio, length: 120) %>
+                </p>
+
+                <!-- Skills -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <% marketer.skills.limit(3).each do |skill| %>
+                    <span class="badge badge-outline text-xs"><%= skill.name %></span>
+                  <% end %>
+                  <% if marketer.skills.count > 3 %>
+                    <span class="text-xs" style="color: var(--color-muted-foreground);">+<%= marketer.skills.count - 3 %> more</span>
+                  <% end %>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center space-x-4">
+                    <span class="font-semibold" style="color: var(--color-primary);"><%= marketer.display_rate %></span>
+                    <% if marketer.location %>
+                      <span class="text-sm" style="color: var(--color-muted-foreground);"><%= marketer.location.name %></span>
+                    <% end %>
+                  </div>
+                  <%= link_to "View Profile", marketer_path(marketer), class: "btn btn-sm btn-primary" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Pagination -->
+        <% if @marketers.respond_to?(:current_page) %>
+          <div class="mt-8">
+            <%= paginate @marketers %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <h3 class="text-lg font-medium mb-2" style="color: var(--color-foreground);">No <%= @skill.name %> marketers found</h3>
+        <p class="mb-6" style="color: var(--color-muted-foreground);">Be the first to join our directory as a <%= @skill.name %> specialist.</p>
+        <% unless user_signed_in? %>
+          <%= link_to "Join as a Marketer", new_user_registration_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Related Links -->
+    <div class="mt-12 p-6 rounded-lg" style="background-color: var(--color-accent);">
+      <h3 class="text-lg font-semibold mb-4" style="color: var(--color-accent-foreground);">Explore Other Specialties</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <% Skill.where.not(id: @skill.id).limit(8).each do |skill| %>
+          <%= link_to skill_marketers_path(skill.slug), class: "text-sm transition-colors", style: "color: var(--color-primary);" do %>
+            <%= skill.name %> →
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sender: one
+  marketer_profile: one
+  subject: MyString
+  body: MyText
+  read_at: 2025-10-19 21:41:53
+
+two:
+  sender: two
+  marketer_profile: two
+  subject: MyString
+  body: MyText
+  read_at: 2025-10-19 21:41:53

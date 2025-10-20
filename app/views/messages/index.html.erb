@@ -1,0 +1,113 @@
+<!-- Messages Dashboard -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Messages</h1>
+      <p class="mt-1" style="color: var(--color-muted-foreground);">Manage your conversations with marketers and clients</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- Received Messages (For Marketers) -->
+      <% if current_user.marketer? && @received_messages.present? %>
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-lg font-semibold mb-6" style="color: var(--color-foreground);">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2" />
+              </svg>
+              Received Messages
+            </h2>
+
+            <div class="space-y-4">
+              <% @received_messages.each do |message| %>
+                <%= link_to message_path(message), class: "block p-4 rounded-lg border transition-colors hover:bg-gray-50 #{message.unread? ? 'border-blue-200 bg-blue-50' : ''}", style: "border-color: var(--color-border);" do %>
+                  <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1">
+                      <h3 class="font-medium text-sm" style="color: var(--color-foreground);"><%= message.subject %></h3>
+                      <p class="text-sm" style="color: var(--color-muted-foreground);">From: <%= message.sender.email %></p>
+                    </div>
+                    <div class="text-right">
+                      <% if message.unread? %>
+                        <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full" style="background-color: var(--color-primary); color: white;">
+                          New
+                        </span>
+                      <% end %>
+                      <p class="text-xs mt-1" style="color: var(--color-muted-foreground);"><%= time_ago_in_words(message.created_at) %> ago</p>
+                    </div>
+                  </div>
+                  <p class="text-sm" style="color: var(--color-muted-foreground);"><%= truncate(message.body, length: 120) %></p>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @received_messages.respond_to?(:current_page) %>
+              <div class="mt-6">
+                <%= paginate @received_messages %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Sent Messages -->
+      <% if @sent_messages.present? %>
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-lg font-semibold mb-6" style="color: var(--color-foreground);">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              Sent Messages
+            </h2>
+
+            <div class="space-y-4">
+              <% @sent_messages.each do |message| %>
+                <%= link_to message_path(message), class: "block p-4 rounded-lg border transition-colors hover:bg-gray-50", style: "border-color: var(--color-border);" do %>
+                  <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1">
+                      <h3 class="font-medium text-sm" style="color: var(--color-foreground);"><%= message.subject %></h3>
+                      <p class="text-sm" style="color: var(--color-muted-foreground);">To: <%= message.marketer_profile.account.name %></p>
+                    </div>
+                    <div class="text-right">
+                      <% if message.read? %>
+                        <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                          Read
+                        </span>
+                      <% end %>
+                      <p class="text-xs mt-1" style="color: var(--color-muted-foreground);"><%= time_ago_in_words(message.created_at) %> ago</p>
+                    </div>
+                  </div>
+                  <p class="text-sm" style="color: var(--color-muted-foreground);"><%= truncate(message.body, length: 120) %></p>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @sent_messages.respond_to?(:current_page) %>
+              <div class="mt-6">
+                <%= paginate @sent_messages %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Empty State -->
+      <% if (!current_user.marketer? || @received_messages.blank?) && @sent_messages.blank? %>
+        <div class="lg:col-span-2">
+          <div class="text-center py-12">
+            <svg class="w-12 h-12 mx-auto mb-4" style="color: var(--color-muted-foreground);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2" />
+            </svg>
+            <h3 class="text-lg font-medium mb-2" style="color: var(--color-foreground);">No messages yet</h3>
+            <p class="mb-6" style="color: var(--color-muted-foreground);">Start a conversation by contacting a marketer in our directory.</p>
+            <%= link_to "Browse Marketers", marketers_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

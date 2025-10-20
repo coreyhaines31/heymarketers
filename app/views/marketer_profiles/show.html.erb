@@ -1,2 +1,263 @@
-<h1>MarketerProfiles#show</h1>
-<p>Find me in app/views/marketer_profiles/show.html.erb</p>
+<!-- Individual Marketer Profile -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Back Navigation -->
+    <div class="mb-6">
+      <%= link_to marketers_path, class: "flex items-center text-sm transition-colors", style: "color: var(--color-muted-foreground);" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to Directory
+      <% end %>
+    </div>
+
+    <!-- Profile Header -->
+    <div class="card mb-8">
+      <div class="card-body">
+        <div class="flex flex-col md:flex-row md:items-start space-y-6 md:space-y-0 md:space-x-8">
+
+          <!-- Profile Photo & Basic Info -->
+          <div class="flex-shrink-0">
+            <div class="w-32 h-32 rounded-full flex items-center justify-center text-white text-3xl font-bold" style="background-color: var(--color-primary);">
+              <%= @marketer_profile.account.name.first(2).upcase %>
+            </div>
+          </div>
+
+          <!-- Main Info -->
+          <div class="flex-1">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+              <div class="flex-1">
+                <h1 class="text-3xl font-bold mb-2" style="color: var(--color-foreground);"><%= @marketer_profile.account.name %></h1>
+                <p class="text-xl mb-3" style="color: var(--color-muted-foreground);"><%= @marketer_profile.title %></p>
+
+                <div class="flex flex-wrap items-center gap-4 mb-4">
+                  <% if @marketer_profile.location %>
+                    <div class="flex items-center" style="color: var(--color-muted-foreground);">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <%= @marketer_profile.location.name %>
+                    </div>
+                  <% end %>
+
+                  <div class="flex items-center" style="color: var(--color-muted-foreground);">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                    <%= @marketer_profile.display_rate %>
+                  </div>
+
+                  <% if @marketer_profile.availability.present? %>
+                    <div class="flex items-center">
+                      <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                        <%= @marketer_profile.availability.humanize %>
+                      </span>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Star Rating -->
+                <div class="flex items-center mb-4">
+                  <div class="flex text-yellow-400">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                  </div>
+                  <span class="text-sm ml-2" style="color: var(--color-muted-foreground);">5.0 (23 reviews)</span>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-col space-y-3 mt-4 md:mt-0">
+                <% if user_signed_in? %>
+                  <%= link_to new_marketer_profile_message_path(@marketer_profile), class: "btn btn-primary px-8" do %>
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Send Message
+                  <% end %>
+                  <button class="btn btn-outline px-8">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    Save Profile
+                  </button>
+                <% else %>
+                  <%= link_to new_user_session_path, class: "btn btn-primary px-8" do %>
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Sign in to Contact
+                  <% end %>
+                <% end %>
+                <% if user_signed_in? && @marketer_profile.account.users.include?(current_user) %>
+                  <%= link_to "Edit Profile", edit_marketer_profile_path(@marketer_profile), class: "btn btn-secondary px-8" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left Column - Main Content -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- About Section -->
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">About</h2>
+            <div class="prose prose-sm" style="color: var(--color-muted-foreground);">
+              <%= simple_format(@marketer_profile.bio) %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills Section -->
+        <% if @marketer_profile.skills.any? %>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Skills & Expertise</h2>
+              <div class="flex flex-wrap gap-3">
+                <% @marketer_profile.skills.each do |skill| %>
+                  <span class="badge badge-outline"><%= skill.name %></span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Portfolio Section -->
+        <% if @marketer_profile.portfolio_url.present? %>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Portfolio</h2>
+              <a href="<%= @marketer_profile.portfolio_url %>" target="_blank" class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="border-color: var(--color-border);">
+                <svg class="w-6 h-6 mr-3" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                <div>
+                  <p class="font-medium" style="color: var(--color-foreground);">View Portfolio</p>
+                  <p class="text-sm" style="color: var(--color-muted-foreground);"><%= @marketer_profile.portfolio_url %></p>
+                </div>
+              </a>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Resume Section -->
+        <% if @marketer_profile.resume.attached? %>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Resume</h2>
+              <%= link_to @marketer_profile.resume, class: "flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors", style: "border-color: var(--color-border);" do %>
+                <svg class="w-6 h-6 mr-3" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <div>
+                  <p class="font-medium" style="color: var(--color-foreground);">Download Resume</p>
+                  <p class="text-sm" style="color: var(--color-muted-foreground);">PDF Document</p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Right Sidebar -->
+      <div class="space-y-6">
+
+        <!-- Contact Info Card -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Get In Touch</h3>
+            <div class="space-y-3">
+              <% if user_signed_in? %>
+                <%= link_to new_marketer_profile_message_path(@marketer_profile), class: "btn btn-primary w-full" do %>
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Send Message
+                <% end %>
+                <%= link_to new_marketer_profile_message_path(@marketer_profile, subject: "Quote Request"), class: "btn btn-outline w-full" do %>
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 5h6a2 2 0 002-2V9a2 2 0 00-2-2H8a2 2 0 00-2 2v5a2 2 0 002 2z" />
+                  </svg>
+                  Request Quote
+                <% end %>
+              <% else %>
+                <%= link_to new_user_session_path, class: "btn btn-primary w-full" do %>
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Sign in to Contact
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability Card -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Availability</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Status</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @marketer_profile.availability&.humanize || "Available" %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Rate</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @marketer_profile.display_rate %></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Response Time</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);">Within 24 hours</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Quick Stats</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Projects Completed</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);">23+</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Client Satisfaction</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);">100%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Repeat Clients</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);">85%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Similar Marketers -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Similar Marketers</h3>
+            <div class="space-y-3">
+              <div class="text-center py-4" style="color: var(--color-muted-foreground);">
+                <p class="text-sm">More recommendations coming soon</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

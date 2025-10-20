@@ -1,2 +1,207 @@
-<h1>MarketerProfiles#new</h1>
-<p>Find me in app/views/marketer_profiles/new.html.erb</p>
+<!-- Create Marketer Profile -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Create Your Marketing Profile</h1>
+          <p class="mt-1" style="color: var(--color-muted-foreground);">Join our directory and connect with businesses looking for your expertise</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card">
+      <div class="card-body">
+        <%= form_with model: @marketer_profile, local: true, multipart: true, class: "space-y-8" do |f| %>
+
+          <!-- Basic Information Section -->
+          <div>
+            <h2 class="text-lg font-semibold mb-6 pb-2 border-b" style="color: var(--color-foreground); border-color: var(--color-border);">
+              Basic Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="marketer_profile_title" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Professional Title *
+                </label>
+                <%= f.text_field :title,
+                    placeholder: "e.g., Senior Digital Marketing Specialist",
+                    class: "input w-full",
+                    required: true %>
+                <% if @marketer_profile.errors[:title].any? %>
+                  <p class="text-sm mt-1" style="color: var(--color-destructive);"><%= @marketer_profile.errors[:title].first %></p>
+                <% end %>
+              </div>
+
+              <div>
+                <label for="marketer_profile_hourly_rate" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Hourly Rate (USD) *
+                </label>
+                <%= f.number_field :hourly_rate,
+                    placeholder: "150",
+                    min: 1,
+                    class: "input w-full",
+                    required: true %>
+                <% if @marketer_profile.errors[:hourly_rate].any? %>
+                  <p class="text-sm mt-1" style="color: var(--color-destructive);"><%= @marketer_profile.errors[:hourly_rate].first %></p>
+                <% end %>
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="marketer_profile_location_id" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Location
+                </label>
+                <%= f.select :location_id,
+                    options_from_collection_for_select(@locations, :id, :name, @marketer_profile.location_id),
+                    { prompt: "Select your primary location" },
+                    { class: "input w-full" } %>
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="marketer_profile_availability" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Availability
+                </label>
+                <%= f.select :availability,
+                    options_for_select([
+                      ['Available for new projects', 'available'],
+                      ['Available part-time', 'part_time'],
+                      ['Fully booked', 'booked'],
+                      ['Not available', 'unavailable']
+                    ], @marketer_profile.availability),
+                    { prompt: "Select your availability" },
+                    { class: "input w-full" } %>
+              </div>
+            </div>
+          </div>
+
+          <!-- About Section -->
+          <div>
+            <h2 class="text-lg font-semibold mb-6 pb-2 border-b" style="color: var(--color-foreground); border-color: var(--color-border);">
+              About You
+            </h2>
+
+            <div>
+              <label for="marketer_profile_bio" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                Professional Bio *
+              </label>
+              <%= f.text_area :bio,
+                  rows: 6,
+                  placeholder: "Tell potential clients about your experience, expertise, and what makes you unique. Highlight your biggest achievements and the types of projects you excel at.",
+                  class: "input w-full",
+                  required: true %>
+              <p class="text-sm mt-1" style="color: var(--color-muted-foreground);">
+                This will be visible to potential clients. Make it compelling and professional.
+              </p>
+              <% if @marketer_profile.errors[:bio].any? %>
+                <p class="text-sm mt-1" style="color: var(--color-destructive);"><%= @marketer_profile.errors[:bio].first %></p>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Skills Section -->
+          <div>
+            <h2 class="text-lg font-semibold mb-6 pb-2 border-b" style="color: var(--color-foreground); border-color: var(--color-border);">
+              Skills & Expertise
+            </h2>
+
+            <div>
+              <label class="block text-sm font-medium mb-3" style="color: var(--color-foreground);">
+                Select your skills (choose all that apply)
+              </label>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <% @skills.each do |skill| %>
+                  <label class="flex items-center p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50" style="border-color: var(--color-border);">
+                    <%= check_box_tag "marketer_profile[skill_ids][]", skill.id,
+                        @marketer_profile.skill_ids.include?(skill.id),
+                        class: "mr-3 rounded",
+                        style: "color: var(--color-primary);" %>
+                    <span class="text-sm" style="color: var(--color-foreground);"><%= skill.name %></span>
+                  </label>
+                <% end %>
+              </div>
+              <p class="text-sm mt-2" style="color: var(--color-muted-foreground);">
+                Select the skills you're most proficient in. This helps clients find you.
+              </p>
+            </div>
+          </div>
+
+          <!-- Portfolio & Files Section -->
+          <div>
+            <h2 class="text-lg font-semibold mb-6 pb-2 border-b" style="color: var(--color-foreground); border-color: var(--color-border);">
+              Portfolio & Documents
+            </h2>
+
+            <div class="space-y-6">
+              <div>
+                <label for="marketer_profile_portfolio_url" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Portfolio URL
+                </label>
+                <%= f.url_field :portfolio_url,
+                    placeholder: "https://yourportfolio.com",
+                    class: "input w-full" %>
+                <p class="text-sm mt-1" style="color: var(--color-muted-foreground);">
+                  Link to your portfolio, personal website, or case studies
+                </p>
+              </div>
+
+              <div>
+                <label for="marketer_profile_profile_photo" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Profile Photo
+                </label>
+                <%= f.file_field :profile_photo,
+                    accept: "image/*",
+                    class: "input w-full" %>
+                <p class="text-sm mt-1" style="color: var(--color-muted-foreground);">
+                  Upload a professional headshot (optional)
+                </p>
+              </div>
+
+              <div>
+                <label for="marketer_profile_resume" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Resume / CV
+                </label>
+                <%= f.file_field :resume,
+                    accept: ".pdf,.doc,.docx",
+                    class: "input w-full" %>
+                <p class="text-sm mt-1" style="color: var(--color-muted-foreground);">
+                  Upload your resume (PDF preferred, optional)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t" style="border-color: var(--color-border);">
+            <%= link_to "Cancel", root_path, class: "btn btn-outline" %>
+            <%= f.submit "Create Profile", class: "btn btn-primary" %>
+          </div>
+
+          <!-- Help Text -->
+          <div class="p-4 rounded-lg" style="background-color: var(--color-accent);">
+            <div class="flex">
+              <svg class="w-5 h-5 mr-3 mt-0.5" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 class="text-sm font-medium" style="color: var(--color-accent-foreground);">
+                  Tips for a great profile
+                </h3>
+                <p class="text-sm mt-1" style="color: var(--color-accent-foreground);">
+                  • Write a compelling bio that highlights your unique value proposition<br>
+                  • Select skills that accurately represent your expertise<br>
+                  • Include a professional photo to build trust with potential clients<br>
+                  • Set a competitive hourly rate based on your experience level
+                </p>
+              </div>
+            </div>
+          </div>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
