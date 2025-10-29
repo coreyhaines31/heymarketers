@@ -79,4 +79,58 @@ bin/rails generate          # Code generation
 - **JavaScript**: Import maps for ES6 modules
 - **Interactivity**: Hotwire (Turbo for SPA-like navigation, Stimulus for JavaScript components)
 
-This is a fresh Rails application with minimal customization, following standard Rails conventions and modern Rails 7 patterns.
+## Design System
+
+### Custom Theme
+The application uses a custom green-based design system with comprehensive theming support:
+
+#### Color Palette
+- **Primary**: `#457f3d` (Forest Green) - Used for buttons, links, and primary actions
+- **Secondary**: `#f5f5f4` (Light Gray) - Used for secondary elements
+- **Background**: `#fafaf9` (Warm White) - Main background color
+- **Foreground**: `#402a2b` (Dark Brown) - Primary text color
+- **Accent**: `#e9f2e7` (Light Green) - Highlights and accents
+- **Muted**: `#72514e` (Muted Brown) - Secondary text
+
+#### Typography
+- **Primary Font**: Montserrat (sans-serif) - Modern, clean typeface
+- **Serif Font**: Merriweather (serif) - For emphasis and headings
+- **Mono Font**: Source Code Pro (monospace) - For code and technical content
+
+#### Component Classes
+Use these standardized CSS classes for consistent styling across the application:
+
+**Buttons:**
+- `.btn` - Base button styles
+- `.btn-primary` - Primary green button
+- `.btn-secondary` - Secondary light button
+- `.btn-outline` - Outlined button
+- `.btn-ghost` - Transparent button
+- `.btn-sm`, `.btn-lg` - Size variants
+
+**Cards:**
+- `.card` - Card container with proper shadows and borders
+- `.card-body` - Standard card content padding
+
+**Badges:**
+- `.badge` - Base badge styles
+- `.badge-primary`, `.badge-secondary`, `.badge-accent` - Color variants
+- `.badge-outline` - Outlined badge
+
+**Form Elements:**
+- `.input` - Styled form inputs with proper focus states
+
+**Layout:**
+- Use CSS custom properties for colors: `var(--color-primary)`, `var(--color-foreground)`, etc.
+- Dark mode support available via `.dark` class
+- Consistent border radius: `var(--radius)`
+- Standardized shadows: `var(--shadow-sm)`, `var(--shadow-md)`, etc.
+
+#### Development Guidelines
+1. **Always use design system classes** instead of custom Tailwind utilities for colors
+2. **Reference CSS variables** for consistency: `style="color: var(--color-primary);"`
+3. **Font loading** handled via Google Fonts in layout
+4. **Theme compilation** via `yarn build:css` command
+5. **Future components** should follow existing patterns in `app/assets/stylesheets/application.tailwind.css`
+
+This is a mature Rails application with a comprehensive design system, following standard Rails conventions and modern Rails 7 patterns.
