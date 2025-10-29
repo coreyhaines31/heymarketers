@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_29_071013) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_29_073412) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,13 +98,50 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_29_071013) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.tsvector "search_vector"
+    t.string "external_source"
+    t.string "external_id"
+    t.string "external_url"
+    t.string "external_guid"
+    t.string "arrangement"
+    t.string "location_type"
+    t.text "location_limits"
+    t.string "company_logo_url"
+    t.string "application_url"
+    t.string "salary_schedule"
+    t.string "salary_currency"
+    t.text "html_description"
+    t.text "plain_text_description"
+    t.datetime "last_synced_at"
+    t.index ["arrangement"], name: "index_job_listings_on_arrangement"
     t.index ["company_profile_id"], name: "index_job_listings_on_company_profile_id"
     t.index ["employment_type"], name: "index_job_listings_on_employment_type"
+    t.index ["external_guid"], name: "index_job_listings_on_external_guid"
+    t.index ["external_source", "external_id"], name: "index_job_listings_on_external_source_and_external_id", unique: true
+    t.index ["last_synced_at"], name: "index_job_listings_on_last_synced_at"
     t.index ["location_id"], name: "index_job_listings_on_location_id"
+    t.index ["location_type"], name: "index_job_listings_on_location_type"
     t.index ["posted_at"], name: "index_job_listings_on_posted_at"
     t.index ["remote_ok"], name: "index_job_listings_on_remote_ok"
     t.index ["salary_min", "salary_max"], name: "index_job_listings_on_salary_min_and_salary_max"
     t.index ["search_vector"], name: "index_job_listings_on_search_vector", using: :gin
+  end
+
+  create_table "job_sync_logs", force: :cascade do |t|
+    t.string "source_type", null: false
+    t.string "source_url", null: false
+    t.integer "jobs_found", default: 0
+    t.integer "jobs_created", default: 0
+    t.integer "jobs_updated", default: 0
+    t.integer "jobs_deleted", default: 0
+    t.text "error_messages", default: [], array: true
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.boolean "success", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type"], name: "index_job_sync_logs_on_source_type"
+    t.index ["started_at"], name: "index_job_sync_logs_on_started_at"
+    t.index ["success"], name: "index_job_sync_logs_on_success"
   end
 
   create_table "locations", force: :cascade do |t|

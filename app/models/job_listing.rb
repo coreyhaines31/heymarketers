@@ -1,19 +1,30 @@
 class JobListing < ApplicationRecord
+  EXTERNAL_SOURCES = %w[jobboardly].freeze
+  ARRANGEMENTS = %w[fulltime parttime contract freelance].freeze
+  LOCATION_TYPES = %w[remote onsite hybrid].freeze
+
   belongs_to :company_profile
   belongs_to :location, optional: true
   has_many :analytics_events, as: :trackable, dependent: :destroy
   has_many :favorites, as: :favoritable, dependent: :destroy
 
   validates :title, presence: true, length: { minimum: 5, maximum: 100 }
-  validates :description, presence: true, length: { minimum: 50, maximum: 5000 }
+  validates :description, presence: true, length: { minimum: 50, maximum: 5000 }, unless: :external?
   validates :employment_type, presence: true, inclusion: { in: %w[full_time part_time contract freelance internship] }
   validates :status, inclusion: { in: %w[active inactive expired] }
   validates :salary_min, numericality: { greater_than: 0 }, allow_blank: true
   validates :salary_max, numericality: { greater_than: 0 }, allow_blank: true
+  validates :external_source, inclusion: { in: EXTERNAL_SOURCES }, allow_blank: true
+  validates :arrangement, inclusion: { in: ARRANGEMENTS }, allow_blank: true
+  validates :location_type, inclusion: { in: LOCATION_TYPES }, allow_blank: true
+  validates :external_id, uniqueness: { scope: :external_source }, allow_blank: true
   validate :salary_max_greater_than_min
 
   scope :active, -> { where(status: 'active') }
   scope :recent, -> { order(posted_at: :desc) }
+  scope :external, -> { where.not(external_source: nil) }
+  scope :native, -> { where(external_source: nil) }
+  scope :from_jobboardly, -> { where(external_source: 'jobboardly') }
   scope :by_location, ->(location_id) { where(location_id: location_id) if location_id.present? }
   scope :remote_friendly, -> { where(remote_ok: true) }
   scope :by_employment_type, ->(type) { where(employment_type: type) if type.present? }
@@ -90,6 +101,27 @@ class JobListing < ApplicationRecord
   def favorited_by?(user)
     return false unless user
     favorites.exists?(user: user)
+  end
+
+  # External job methods
+  def external?
+    external_source.present?
+  end
+
+  def native?
+    !external?
+  end
+
+  def source_display
+    external? ? external_source.humanize : 'Native'
+  end
+
+  def effective_description
+    external? ? (html_description.presence || plain_text_description.presence || description) : description
+  end
+
+  def apply_url
+    external? ? (application_url.presence || external_url) : nil
   end
 
   private
