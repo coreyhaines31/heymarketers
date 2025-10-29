@@ -27,7 +27,7 @@ class MarketerProfilesController < ApplicationController
     @search_params = search_params
   end
 
-  # GET /marketers/:id
+  # GET /:slug
   def show
   end
 
@@ -75,10 +75,51 @@ class MarketerProfilesController < ApplicationController
     redirect_to marketers_path, notice: 'Marketer profile was successfully deleted.'
   end
 
+  # GET /marketer_profiles/check_slug
+  def check_slug
+    slug = params[:slug]
+    profile_id = params[:id]
+
+    if slug.blank?
+      render json: { available: false, reason: 'Slug cannot be blank' }
+      return
+    end
+
+    # Check format
+    unless slug.match?(/\A[a-z0-9\-]+\z/)
+      render json: { available: false, reason: 'Invalid format' }
+      return
+    end
+
+    # Create a temporary profile to check conflicts
+    temp_profile = MarketerProfile.new(slug: slug)
+    temp_profile.id = profile_id.to_i if profile_id.present?
+
+    if temp_profile.send(:slug_conflicts?)
+      reason = if temp_profile.send(:slug_reserved?)
+                 'Reserved system path'
+               elsif temp_profile.send(:seo_slug_conflict?)
+                 'Conflicts with existing skills, locations, service types, or tools'
+               else
+                 'Already taken by another profile'
+               end
+
+      render json: { available: false, reason: reason }
+    else
+      render json: { available: true }
+    end
+  end
+
   private
 
   def set_marketer_profile
-    @marketer_profile = MarketerProfile.find(params[:id])
+    if params[:id]
+      @marketer_profile = MarketerProfile.find(params[:id])
+    elsif params[:slug]
+      @marketer_profile = MarketerProfile.find_by!(slug: params[:slug])
+    else
+      @marketer_profile = MarketerProfile.find(params[:marketer_profile_id] || params[:id])
+    end
   end
 
   def check_ownership
@@ -90,7 +131,7 @@ class MarketerProfilesController < ApplicationController
   def marketer_profile_params
     params.require(:marketer_profile).permit(:title, :bio, :hourly_rate, :portfolio_url,
                                             :availability, :location_id, :experience_level,
-                                            :resume, :profile_photo, skill_ids: [])
+                                            :slug, :resume, :profile_photo, skill_ids: [])
   end
 
   def search_params

@@ -18,12 +18,14 @@ Rails.application.routes.draw do
   get "jobs", to: "job_listings#index"
   get "jobs/:id", to: "job_listings#show", as: :job
 
-  # Marketer directory
-  get "marketers", to: "marketer_profiles#index"
-  get "marketers/:id", to: "marketer_profiles#show", as: :marketer
+  # Main directory (remove redundant /marketers path)
+  get "directory", to: "marketer_profiles#index"
 
   # Messages and reviews for specific marketer profiles
   resources :marketer_profiles, except: [:index, :show] do
+    collection do
+      get :check_slug
+    end
     resources :messages, only: [:new, :create]
     resources :reviews do
       member do
@@ -58,8 +60,24 @@ Rails.application.routes.draw do
     end
   end
 
-  # Programmatic SEO pages
-  get ":skill_slug-marketers", to: "seo#skills", as: :skill_marketers, constraints: { skill_slug: /[a-z0-9\-]+/ }
-  get "marketers-in-:location_slug", to: "seo#locations", as: :location_marketers, constraints: { location_slug: /[a-z0-9\-]+/ }
-  get ":skill_slug-marketers-in-:location_slug", to: "seo#skill_location", as: :skill_location_marketers, constraints: { skill_slug: /[a-z0-9\-]+/, location_slug: /[a-z0-9\-]+/ }
+  # Flexible Programmatic SEO Strategy (removing redundant "marketers")
+  # Single dimension pages
+  get ":slug", to: "seo#dynamic_page", as: :seo_single,
+      constraints: lambda { |req| SeoController.valid_single_slug?(req.params[:slug]) }
+
+  # Two dimension combinations
+  get ":slug1/:slug2", to: "seo#dynamic_page", as: :seo_double,
+      constraints: lambda { |req| SeoController.valid_double_slugs?(req.params[:slug1], req.params[:slug2]) }
+
+  # Three dimension combinations
+  get ":slug1/:slug2/:slug3", to: "seo#dynamic_page", as: :seo_triple,
+      constraints: lambda { |req| SeoController.valid_triple_slugs?(req.params[:slug1], req.params[:slug2], req.params[:slug3]) }
+
+  # Four dimension combinations
+  get ":slug1/:slug2/:slug3/:slug4", to: "seo#dynamic_page", as: :seo_quadruple,
+      constraints: lambda { |req| SeoController.valid_quadruple_slugs?(req.params[:slug1], req.params[:slug2], req.params[:slug3], req.params[:slug4]) }
+
+  # Individual marketer profiles
+  get "profile/:slug", to: "marketer_profiles#show", as: :marketer,
+      constraints: lambda { |req| MarketerProfile.exists?(slug: req.params[:slug]) }
 end

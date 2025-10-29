@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  marketer_profile: one
+  tool: one
+  proficiency_level: 1
+
+two:
+  marketer_profile: two
+  tool: two
+  proficiency_level: 1

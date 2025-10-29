@@ -4,6 +4,8 @@ class MarketerProfile < ApplicationRecord
 
   has_many :marketer_skills, dependent: :destroy
   has_many :skills, through: :marketer_skills
+  has_many :marketer_tools, dependent: :destroy
+  has_many :tools, through: :marketer_tools
   has_many :messages, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :analytics_events, as: :trackable, dependent: :destroy
@@ -16,6 +18,11 @@ class MarketerProfile < ApplicationRecord
   validates :bio, presence: true
   validates :hourly_rate, presence: true, numericality: { greater_than: 0 }
   validates :experience_level, inclusion: { in: %w[junior mid senior expert], allow_blank: true }
+  validates :slug, presence: true, uniqueness: true, format: { with: /\A[a-z0-9\-]+\z/, message: "can only contain lowercase letters, numbers, and hyphens" }
+  validate :slug_not_reserved
+
+  before_validation :generate_slug, if: -> { slug.blank? }
+  before_validation :ensure_slug_uniqueness, if: -> { slug_changed? }
 
   scope :available, -> { where(availability: 'available') }
   scope :by_location, ->(location_id) { where(location_id: location_id) if location_id.present? }
@@ -51,8 +58,8 @@ class MarketerProfile < ApplicationRecord
     "$#{hourly_rate}/hr"
   end
 
-  def slug
-    "#{title.parameterize}-#{id}"
+  def to_param
+    slug
   end
 
   def experience_level_display
@@ -114,6 +121,68 @@ class MarketerProfile < ApplicationRecord
   after_touch :update_search_vector
 
   private
+
+  def generate_slug
+    if account&.name.present?
+      base_slug = account.name.parameterize
+    else
+      base_slug = title.parameterize if title.present?
+    end
+
+    return unless base_slug.present?
+
+    self.slug = base_slug
+    ensure_slug_uniqueness
+  end
+
+  def ensure_slug_uniqueness
+    return unless slug.present?
+
+    original_slug = slug
+    counter = 1
+
+    while slug_conflicts?
+      self.slug = "#{original_slug}-#{counter}"
+      counter += 1
+    end
+  end
+
+  def slug_conflicts?
+    # Check against other marketer profiles
+    profile_conflict = self.class.where(slug: slug).where.not(id: id).exists?
+
+    # Check against SEO reserved paths and system routes
+    reserved_conflict = slug_reserved?
+
+    # Check against SEO dimension slugs
+    seo_conflict = seo_slug_conflict?
+
+    profile_conflict || reserved_conflict || seo_conflict
+  end
+
+  def slug_reserved?
+    SeoController.reserved_paths.include?(slug)
+  end
+
+  def seo_slug_conflict?
+    return false unless slug.present?
+
+    # Check if slug conflicts with any SEO dimension
+    Skill.exists?(slug: slug) ||
+    Location.exists?(slug: slug) ||
+    ServiceType.exists?(slug: slug) ||
+    Tool.exists?(slug: slug)
+  end
+
+  def slug_not_reserved
+    if slug_reserved?
+      errors.add(:slug, "is reserved and cannot be used")
+    end
+
+    if seo_slug_conflict?
+      errors.add(:slug, "conflicts with existing skills, locations, service types, or tools")
+    end
+  end
 
   def update_search_vector_if_needed
     # The PostgreSQL trigger handles most updates, but we may need to manually

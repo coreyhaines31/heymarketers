@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_29_071013) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -137,6 +137,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
     t.integer "portfolio_files_count", default: 0
     t.boolean "files_validated", default: false
     t.json "validation_errors", default: {}
+    t.string "slug"
     t.index ["account_id"], name: "index_marketer_profiles_on_account_id"
     t.index ["availability"], name: "index_marketer_profiles_on_availability"
     t.index ["experience_level"], name: "index_marketer_profiles_on_experience_level"
@@ -146,6 +147,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
     t.index ["profile_photo_processed"], name: "index_marketer_profiles_on_profile_photo_processed"
     t.index ["resume_uploaded_at"], name: "index_marketer_profiles_on_resume_uploaded_at"
     t.index ["search_vector"], name: "index_marketer_profiles_on_search_vector", using: :gin
+    t.index ["slug"], name: "index_marketer_profiles_on_slug", unique: true
   end
 
   create_table "marketer_skills", force: :cascade do |t|
@@ -155,6 +157,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
     t.datetime "updated_at", null: false
     t.index ["marketer_profile_id"], name: "index_marketer_skills_on_marketer_profile_id"
     t.index ["skill_id"], name: "index_marketer_skills_on_skill_id"
+  end
+
+  create_table "marketer_tools", force: :cascade do |t|
+    t.bigint "marketer_profile_id", null: false
+    t.bigint "tool_id", null: false
+    t.integer "proficiency_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["marketer_profile_id"], name: "index_marketer_tools_on_marketer_profile_id"
+    t.index ["tool_id"], name: "index_marketer_tools_on_tool_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -276,6 +288,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
     t.index ["slug"], name: "index_skills_on_slug", unique: true
   end
 
+  create_table "tools", force: :cascade do |t|
+    t.string "name"
+    t.string "slug"
+    t.text "description"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tools_on_slug", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -308,6 +330,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_20_051550) do
   add_foreign_key "marketer_profiles", "locations"
   add_foreign_key "marketer_skills", "marketer_profiles"
   add_foreign_key "marketer_skills", "skills"
+  add_foreign_key "marketer_tools", "marketer_profiles"
+  add_foreign_key "marketer_tools", "tools"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
   add_foreign_key "messages", "marketer_profiles"

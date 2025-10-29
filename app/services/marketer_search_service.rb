@@ -6,7 +6,7 @@ class MarketerSearchService
   attr_reader :params, :results
 
   def initialize(params = {})
-    @params = params.with_indifferent_access
+    @params = params.respond_to?(:with_indifferent_access) ? params.with_indifferent_access : params.to_h.with_indifferent_access
   end
 
   def search

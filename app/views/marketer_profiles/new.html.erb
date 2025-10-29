@@ -79,7 +79,31 @@
                     { class: "input w-full" } %>
               </div>
 
-              <div class="md:col-span-2">
+              <div data-controller="slug-check">
+                <label for="marketer_profile_slug" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
+                  Profile URL
+                </label>
+                <div class="flex items-center">
+                  <span class="text-sm mr-2" style="color: var(--color-muted-foreground);">heymarketers.com/profile/</span>
+                  <%= f.text_field :slug,
+                      placeholder: "your-name",
+                      class: "input flex-1",
+                      pattern: "[a-z0-9\\-]+",
+                      data: {
+                        slug_check_target: "input",
+                        action: "input->slug-check#check"
+                      } %>
+                </div>
+                <div data-slug-check-target="feedback" class="text-sm mt-1" style="display: none;"></div>
+                <p class="text-sm mt-1" style="color: var(--color-muted-foreground);">
+                  This will be your profile URL. Leave blank to auto-generate from your name. Only lowercase letters, numbers, and hyphens allowed.
+                </p>
+                <% if @marketer_profile.errors[:slug].any? %>
+                  <p class="text-sm mt-1" style="color: var(--color-destructive);"><%= @marketer_profile.errors[:slug].first %></p>
+                <% end %>
+              </div>
+
+              <div>
                 <label for="marketer_profile_availability" class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">
                   Availability
                 </label>
