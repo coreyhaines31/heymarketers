@@ -1,0 +1,125 @@
+<!-- Job Sync Log Detail -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <%= link_to admin_job_sync_index_path, class: "btn btn-outline" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Dashboard
+        <% end %>
+        <div class="flex items-center space-x-2">
+          <% if @sync_log.success? %>
+            <span class="badge" style="background-color: #10b981; color: white;">Success</span>
+          <% else %>
+            <span class="badge" style="background-color: #ef4444; color: white;">Failed</span>
+          <% end %>
+        </div>
+      </div>
+      <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">
+        Sync Log #<%= @sync_log.id %>
+      </h1>
+      <p class="mt-1" style="color: var(--color-muted-foreground);">
+        <%= @sync_log.source_type.upcase %> sync started <%= @sync_log.started_at.strftime("%B %d, %Y at %I:%M %p") %>
+      </p>
+    </div>
+
+    <!-- Sync Summary -->
+    <div class="card mb-8">
+      <div class="card-body">
+        <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Sync Summary</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="text-center">
+            <div class="text-2xl font-bold" style="color: var(--color-primary);">
+              <%= @sync_log.jobs_found %>
+            </div>
+            <p class="text-sm" style="color: var(--color-muted-foreground);">Jobs Found</p>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold" style="color: #10b981;">
+              <%= @sync_log.jobs_created %>
+            </div>
+            <p class="text-sm" style="color: var(--color-muted-foreground);">Created</p>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold" style="color: #3b82f6;">
+              <%= @sync_log.jobs_updated %>
+            </div>
+            <p class="text-sm" style="color: var(--color-muted-foreground);">Updated</p>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold" style="color: #ef4444;">
+              <%= @sync_log.jobs_deleted %>
+            </div>
+            <p class="text-sm" style="color: var(--color-muted-foreground);">Deleted</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync Details -->
+    <div class="card mb-8">
+      <div class="card-body">
+        <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Sync Details</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-sm" style="color: var(--color-muted-foreground);">Source URL</span>
+            <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @sync_log.source_url %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm" style="color: var(--color-muted-foreground);">Started At</span>
+            <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @sync_log.started_at.strftime("%B %d, %Y at %I:%M:%S %p") %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm" style="color: var(--color-muted-foreground);">Completed At</span>
+            <span class="text-sm font-medium" style="color: var(--color-foreground);">
+              <%= @sync_log.completed_at&.strftime("%B %d, %Y at %I:%M:%S %p") || "Not completed" %>
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm" style="color: var(--color-muted-foreground);">Duration</span>
+            <span class="text-sm font-medium" style="color: var(--color-foreground);">
+              <%= @sync_log.duration ? "#{@sync_log.duration.round(2)} seconds" : "N/A" %>
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm" style="color: var(--color-muted-foreground);">Success Rate</span>
+            <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @sync_log.success_rate %>%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Messages -->
+    <% if @sync_log.error_messages.present? && @sync_log.error_messages.any? %>
+      <div class="card">
+        <div class="card-body">
+          <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Error Messages</h2>
+          <div class="space-y-2">
+            <% @sync_log.error_messages.each_with_index do |error, index| %>
+              <div class="p-3 rounded-lg" style="background-color: #fee2e2;">
+                <p class="text-sm" style="color: #dc2626;">
+                  <strong><%= index + 1 %>.</strong> <%= error %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="card">
+        <div class="card-body text-center">
+          <p style="color: var(--color-muted-foreground);">
+            <svg class="w-8 h-8 mx-auto mb-2" style="color: #10b981;" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            No errors occurred during this sync.
+          </p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

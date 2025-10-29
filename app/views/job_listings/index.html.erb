@@ -114,6 +114,16 @@
                 </span>
               <% end %>
             <% end %>
+
+            <% if @search_params[:job_source].present? %>
+              <% source_text = @search_params[:job_source] == 'external' ? 'External Jobs' : 'Native Jobs' %>
+              <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
+                📡 <%= source_text %>
+                <%= link_to jobs_path(@search_params.except(:job_source)), class: "ml-2 hover:text-red-600" do %>
+                  ×
+                <% end %>
+              </span>
+            <% end %>
           </div>
 
           <!-- Advanced Filters Panel -->
@@ -152,6 +162,15 @@
                 <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Posted</label>
                 <%= f.select :posted_within,
                     options_for_select(@posted_within_options, @search_params[:posted_within]),
+                    {},
+                    { class: "input w-full" } %>
+              </div>
+
+              <!-- Job Source -->
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Job Source</label>
+                <%= f.select :job_source,
+                    options_for_select([['All Sources', ''], ['Native Jobs', 'native'], ['External Jobs', 'external']], @search_params[:job_source]),
                     {},
                     { class: "input w-full" } %>
               </div>
@@ -208,9 +227,16 @@
                     <div class="flex-1">
                       <div class="flex items-start justify-between">
                         <div>
-                          <h3 class="text-lg font-semibold" style="color: var(--color-foreground);">
-                            <%= link_to job.title, job_path(job), class: "hover:underline" %>
-                          </h3>
+                          <div class="flex items-center space-x-2 mb-1">
+                            <h3 class="text-lg font-semibold" style="color: var(--color-foreground);">
+                              <%= link_to job.title, job_path(job), class: "hover:underline" %>
+                            </h3>
+                            <% if job.external? %>
+                              <span class="badge badge-sm" style="background-color: var(--color-secondary); color: var(--color-secondary-foreground);">
+                                External
+                              </span>
+                            <% end %>
+                          </div>
                           <p class="text-sm" style="color: var(--color-muted-foreground);">
                             <%= job.company_profile.name %>
                             <% if job.location %>
@@ -218,6 +244,9 @@
                             <% end %>
                             <% if job.remote_ok %>
                               • 🏠 Remote OK
+                            <% end %>
+                            <% if job.external? %>
+                              • 📡 via <%= job.source_display %>
                             <% end %>
                           </p>
                           <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">
@@ -245,10 +274,14 @@
                         </div>
                         <div class="flex items-center space-x-2">
                           <%= link_to "Learn More", job_path(job), class: "btn btn-outline btn-sm" %>
-                          <% if user_signed_in? %>
-                            <%= link_to "Apply Now", job_path(job), class: "btn btn-primary btn-sm" %>
+                          <% if job.external? && job.apply_url.present? %>
+                            <%= link_to "Apply Externally", job.apply_url, class: "btn btn-primary btn-sm", target: "_blank", rel: "noopener" %>
                           <% else %>
-                            <%= link_to "Apply Now", job_path(job), class: "btn btn-primary btn-sm" %>
+                            <% if user_signed_in? %>
+                              <%= link_to "Apply Now", job_path(job), class: "btn btn-primary btn-sm" %>
+                            <% else %>
+                              <%= link_to "Apply Now", job_path(job), class: "btn btn-primary btn-sm" %>
+                            <% end %>
                           <% end %>
                         </div>
                       </div>
@@ -319,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const hasAdvancedFilters = <%= (@search_params[:employment_type].present? ||
                                    @search_params[:company_size].present? ||
                                    @search_params[:posted_within].present? ||
+                                   @search_params[:job_source].present? ||
                                    @search_params[:min_salary].present? ||
                                    @search_params[:max_salary].present? ||
                                    @search_params[:remote_ok].present?).to_json %>;

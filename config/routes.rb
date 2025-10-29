@@ -49,6 +49,15 @@ Rails.application.routes.draw do
   # Other resources
   resources :skills, only: :index
 
+  # Admin namespace
+  namespace :admin do
+    resources :job_sync, only: [:index, :show] do
+      collection do
+        post :trigger_sync
+      end
+    end
+  end
+
   # Notifications
   resources :notifications, only: [:index, :show] do
     member do

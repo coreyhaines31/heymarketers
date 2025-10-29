@@ -84,6 +84,16 @@ class JobSearchService
       @results = @results.joins(:company_profile)
                          .where(company_profiles: { company_size: params[:company_size] })
     end
+
+    # Job source filter
+    if params[:job_source].present?
+      case params[:job_source]
+      when 'external'
+        @results = @results.external
+      when 'native'
+        @results = @results.native
+      end
+    end
   end
 
   def apply_search

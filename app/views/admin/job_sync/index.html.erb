@@ -1,0 +1,136 @@
+<!-- Job Sync Admin Dashboard -->
+<div class="min-h-screen" style="background-color: var(--color-background);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Job Sync Dashboard</h1>
+          <p class="mt-1" style="color: var(--color-muted-foreground);">
+            Monitor external job synchronization from Job Boardly
+          </p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <%= link_to "Manual Sync", trigger_sync_admin_job_sync_index_path, method: :post, class: "btn btn-primary" %>
+          <%= link_to "Back to Site", root_path, class: "btn btn-outline" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="text-2xl font-bold" style="color: var(--color-primary);">
+            <%= @stats[:total_external_jobs] %>
+          </div>
+          <p class="text-sm" style="color: var(--color-muted-foreground);">External Jobs</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="text-2xl font-bold" style="color: var(--color-primary);">
+            <%= @stats[:total_native_jobs] %>
+          </div>
+          <p class="text-sm" style="color: var(--color-muted-foreground);">Native Jobs</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="text-sm font-medium" style="color: var(--color-foreground);">
+            <% if @stats[:last_sync] %>
+              <%= time_ago_in_words(@stats[:last_sync]) %> ago
+            <% else %>
+              Never
+            <% end %>
+          </div>
+          <p class="text-sm" style="color: var(--color-muted-foreground);">Last Sync</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="text-2xl font-bold" style="color: <%= @stats[:failed_syncs_today] > 0 ? '#ef4444' : 'var(--color-primary)' %>;">
+            <%= @stats[:failed_syncs_today] %>
+          </div>
+          <p class="text-sm" style="color: var(--color-muted-foreground);">Failed Today</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync Logs -->
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Recent Sync Logs</h2>
+
+        <% if @sync_logs.any? %>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b" style="border-color: var(--color-border);">
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Status</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Source</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Started</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Duration</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Jobs Found</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Changes</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Errors</th>
+                  <th class="text-left py-3 px-4" style="color: var(--color-foreground);">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @sync_logs.each do |log| %>
+                  <tr class="border-b" style="border-color: var(--color-border);">
+                    <td class="py-3 px-4">
+                      <% if log.success? %>
+                        <span class="badge" style="background-color: #10b981; color: white;">Success</span>
+                      <% else %>
+                        <span class="badge" style="background-color: #ef4444; color: white;">Failed</span>
+                      <% end %>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-foreground);">
+                      <%= log.source_type.upcase %>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-muted-foreground);">
+                      <%= log.started_at.strftime("%m/%d %H:%M") %>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-muted-foreground);">
+                      <%= log.duration ? "#{log.duration.round(1)}s" : "-" %>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-foreground);">
+                      <%= log.jobs_found %>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-foreground);">
+                      <span class="text-green-600">+<%= log.jobs_created %></span>
+                      <span class="text-blue-600">~<%= log.jobs_updated %></span>
+                      <span class="text-red-600">-<%= log.jobs_deleted %></span>
+                    </td>
+                    <td class="py-3 px-4" style="color: var(--color-foreground);">
+                      <%= log.error_messages&.length || 0 %>
+                    </td>
+                    <td class="py-3 px-4">
+                      <%= link_to "View", admin_job_sync_path(log), class: "btn btn-outline btn-sm" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="mt-6">
+            <%= paginate @sync_logs %>
+          </div>
+        <% else %>
+          <div class="text-center py-8">
+            <p style="color: var(--color-muted-foreground);">No sync logs found.</p>
+            <%= link_to "Trigger First Sync", trigger_sync_admin_job_sync_index_path, method: :post, class: "btn btn-primary mt-4" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

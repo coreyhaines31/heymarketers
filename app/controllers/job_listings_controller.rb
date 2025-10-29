@@ -92,6 +92,6 @@ class JobListingsController < ApplicationController
 
   def search_params
     params.permit(:query, :location_id, :employment_type, :remote_ok, :min_salary, :max_salary,
-                  :posted_within, :company_size, :sort, :page, :per_page, employment_types: [])
+                  :posted_within, :company_size, :job_source, :sort, :page, :per_page, employment_types: [])
   end
 end

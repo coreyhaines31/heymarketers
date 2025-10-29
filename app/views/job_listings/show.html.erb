@@ -40,7 +40,14 @@
           <div class="flex-1">
             <div class="flex items-start justify-between">
               <div>
-                <h1 class="text-3xl font-bold mb-2" style="color: var(--color-foreground);"><%= @job_listing.title %></h1>
+                <div class="flex items-center space-x-3 mb-2">
+                  <h1 class="text-3xl font-bold" style="color: var(--color-foreground);"><%= @job_listing.title %></h1>
+                  <% if @job_listing.external? %>
+                    <span class="badge badge-sm" style="background-color: var(--color-secondary); color: var(--color-secondary-foreground);">
+                      External
+                    </span>
+                  <% end %>
+                </div>
                 <div class="flex items-center space-x-4 text-sm" style="color: var(--color-muted-foreground);">
                   <span class="font-medium"><%= @job_listing.company_profile.name %></span>
                   <% if @job_listing.location %>
@@ -48,6 +55,9 @@
                   <% end %>
                   <% if @job_listing.remote_ok %>
                     <span>🏠 Remote OK</span>
+                  <% end %>
+                  <% if @job_listing.external? %>
+                    <span>📡 via <%= @job_listing.source_display %></span>
                   <% end %>
                   <span>📅 Posted <%= time_ago_in_words(@job_listing.posted_at) %> ago</span>
                 </div>
@@ -66,7 +76,9 @@
               <div class="text-right">
                 <p class="text-2xl font-bold mb-2" style="color: var(--color-foreground);"><%= @job_listing.display_salary %></p>
                 <% if @job_listing.active? %>
-                  <% if user_signed_in? %>
+                  <% if @job_listing.external? && @job_listing.apply_url.present? %>
+                    <%= link_to "Apply Externally", @job_listing.apply_url, class: "btn btn-primary btn-lg", target: "_blank", rel: "noopener" %>
+                  <% elsif user_signed_in? %>
                     <button class="btn btn-primary btn-lg" onclick="openApplyModal()">Apply Now</button>
                   <% else %>
                     <%= link_to "Sign In to Apply", new_user_session_path, class: "btn btn-primary btn-lg" %>
@@ -90,8 +102,19 @@
           <div class="card-body">
             <h2 class="text-xl font-semibold mb-4" style="color: var(--color-foreground);">Job Description</h2>
             <div class="prose max-w-none" style="color: var(--color-foreground);">
-              <%= simple_format(@job_listing.description) %>
+              <% if @job_listing.external? && @job_listing.html_description.present? %>
+                <%= @job_listing.html_description.html_safe %>
+              <% else %>
+                <%= simple_format(@job_listing.effective_description) %>
+              <% end %>
             </div>
+            <% if @job_listing.external? && @job_listing.apply_url.present? %>
+              <div class="mt-6 p-4 rounded-lg" style="background-color: var(--color-accent);">
+                <p class="text-sm" style="color: var(--color-accent-foreground);">
+                  📡 This is an external job posting. Click "Apply Externally" to be redirected to the original job listing.
+                </p>
+              </div>
+            <% end %>
           </div>
         </div>
 
@@ -186,6 +209,10 @@
                 </span>
               </div>
               <div class="flex justify-between">
+                <span class="text-sm" style="color: var(--color-muted-foreground);">Job Source</span>
+                <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.source_display %></span>
+              </div>
+              <div class="flex justify-between">
                 <span class="text-sm" style="color: var(--color-muted-foreground);">Posted</span>
                 <span class="text-sm font-medium" style="color: var(--color-foreground);"><%= @job_listing.posted_at.strftime("%B %d, %Y") %></span>
               </div>
@@ -225,7 +252,12 @@
             <div class="card-body text-center">
               <h3 class="font-semibold mb-3" style="color: var(--color-foreground);">Ready to Apply?</h3>
               <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">Join <%= @job_listing.company_profile.name %> and make an impact in their marketing team.</p>
-              <% if user_signed_in? %>
+              <% if @job_listing.external? && @job_listing.apply_url.present? %>
+                <%= link_to "Apply Externally", @job_listing.apply_url, class: "btn btn-primary w-full", target: "_blank", rel: "noopener" %>
+                <p class="text-xs mt-2" style="color: var(--color-muted-foreground);">
+                  You'll be redirected to the original job listing
+                </p>
+              <% elsif user_signed_in? %>
                 <button class="btn btn-primary w-full" onclick="openApplyModal()">Apply for this Position</button>
               <% else %>
                 <%= link_to "Sign In to Apply", new_user_session_path, class: "btn btn-primary w-full" %>
