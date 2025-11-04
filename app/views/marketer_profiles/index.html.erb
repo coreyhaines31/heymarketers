@@ -1,268 +1,326 @@
-<!-- Marketing Specialists Directory -->
-<div class="min-h-screen" style="background-color: var(--color-background);">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<% has_active_filters = @search_params.to_h.any? { |k, v| v.present? && !%w[query sort page].include?(k.to_s) } %>
 
-    <!-- Header -->
-    <div class="mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Find Your Perfect Marketing Expert</h1>
-          <p class="mt-1" style="color: var(--color-muted-foreground);">
-            <% if @search_params[:query].present? %>
-              Found <%= @total_count %> marketing professionals for "<%= @search_params[:query] %>"
-            <% else %>
-              Browse our directory of <%= @total_count %> marketing professionals
+<main class="bg-theme-background">
+  <div class="space-y-24 pb-24">
+    <!-- Directory Hero -->
+    <section class="section overflow-hidden bg-gradient-to-br from-[var(--color-background)] via-[var(--color-accent)]/70 to-[var(--color-accent)]">
+      <div class="section-content">
+        <div class="mx-auto max-w-5xl space-y-12 text-center">
+          <div class="space-y-4">
+            <span class="section-kicker">
+              Browse talent
+            </span>
+            <h1 class="font-serif text-4xl font-bold leading-tight text-theme-foreground md:text-5xl lg:text-6xl">
+              Discover Vetted
+              <span class="block text-theme-primary">Marketing Experts</span>
+            </h1>
+            <p class="text-lg text-theme-muted md:text-xl">
+              <% if @search_params[:query].present? %>
+                Found <%= @total_count %> specialists for “<%= @search_params[:query] %>”.
+              <% else %>
+                Browse <%= @total_count %> marketers ready to accelerate your growth.
+              <% end %>
+            </p>
+          </div>
+
+          <div class="rounded-3xl bg-white/90 p-8 shadow-2xl ring-1 ring-black/5 backdrop-blur">
+            <%= form_with url: directory_path, method: :get, local: true, id: "search-form", class: "space-y-6" do |f| %>
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div class="relative w-full">
+                  <label for="marketer-search" class="sr-only">Search for marketers</label>
+                  <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <%= f.text_field :query,
+                      placeholder: "Search skills, titles, or keywords…",
+                      value: @search_params[:query],
+                      id: "marketer-search",
+                      autocomplete: "off",
+                      class: "input w-full rounded-2xl border border-transparent bg-white py-3 pr-4 text-base font-medium text-theme-foreground shadow-none focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]",
+                      style: "padding-left: 3.5rem;" %>
+                </div>
+                <%= f.submit "Find Marketers", class: "btn btn-primary w-full rounded-2xl px-10 text-base sm:w-auto" %>
+              </div>
+
+              <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div class="flex flex-wrap items-center gap-3">
+                  <button id="toggle-advanced-filters" type="button" class="btn btn-outline btn-sm rounded-full">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+                    </svg>
+                    <span class="filter-text ml-2">Advanced Filters</span>
+                  </button>
+
+                  <div class="relative">
+                    <label for="marketer-sort" class="sr-only">Sort marketers</label>
+                    <%= f.select :sort,
+                        options_for_select(@sort_options.map { |s| [s.humanize, s] }, @search_params[:sort]),
+                        { prompt: "Sort by…" },
+                        { id: "marketer-sort", class: "input rounded-full" } %>
+                  </div>
+
+                  <% if has_active_filters %>
+                    <%= link_to "Clear Filters", directory_path, class: "btn btn-ghost btn-sm rounded-full" %>
+                  <% end %>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-2">
+                  <% if @search_params[:location_id].present? %>
+                    <% location = @locations.find { |l| l.id.to_s == @search_params[:location_id].to_s } %>
+                    <% if location %>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-3 py-1 text-sm font-medium text-[var(--color-accent-foreground)]">
+                        📍 <%= location.name %>
+                        <%= link_to "×", directory_path(@search_params.except(:location_id)), class: "text-sm hover:text-red-600" %>
+                      </span>
+                    <% end %>
+                  <% end %>
+
+                  <% if @search_params[:experience_level].present? %>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-3 py-1 text-sm font-medium text-[var(--color-accent-foreground)]">
+                      🎯 <%= @search_params[:experience_level].humanize %>
+                      <%= link_to "×", directory_path(@search_params.except(:experience_level)), class: "text-sm hover:text-red-600" %>
+                    </span>
+                  <% end %>
+
+                  <% if @search_params[:min_rate].present? || @search_params[:max_rate].present? %>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-3 py-1 text-sm font-medium text-[var(--color-accent-foreground)]">
+                      💰 $<%= @search_params[:min_rate] || 0 %> – $<%= @search_params[:max_rate] || "∞" %>/hr
+                      <%= link_to "×", directory_path(@search_params.except(:min_rate, :max_rate)), class: "text-sm hover:text-red-600" %>
+                    </span>
+                  <% end %>
+
+                  <% skill_ids = Array(@search_params[:skill_ids]).reject(&:blank?).map(&:to_s) %>
+                  <% if skill_ids.any? %>
+                    <% selected_skills = @skills.select { |skill| skill_ids.include?(skill.id.to_s) } %>
+                    <% selected_skills.each_with_index do |skill, index| %>
+                      <% break if index >= 3 %>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-3 py-1 text-sm font-medium text-[var(--color-accent-foreground)]">
+                        🛠 <%= skill.name %>
+                      </span>
+                    <% end %>
+                    <% if selected_skills.size > 3 %>
+                      <span class="inline-flex items-center rounded-full bg-[var(--color-accent)] px-3 py-1 text-sm font-medium text-[var(--color-accent-foreground)]">
+                        +<%= selected_skills.size - 3 %> more
+                      </span>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+
+              <div id="advanced-filters" class="space-y-6 border-t border-black/5 pt-6" style="display: none;">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-theme-foreground">Skills</label>
+                    <%= f.select :skill_ids,
+                        options_from_collection_for_select(@skills, :id, :name, @search_params[:skill_ids]),
+                        { prompt: "All skills" },
+                        { class: "input w-full", multiple: true } %>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-theme-foreground">Location</label>
+                    <%= f.select :location_id,
+                        options_from_collection_for_select(@locations, :id, :name, @search_params[:location_id]),
+                        { prompt: "All locations" },
+                        { class: "input w-full" } %>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-theme-foreground">Experience Level</label>
+                    <%= f.select :experience_level,
+                        options_for_select(@experience_levels.map { |level| [level.humanize, level] }, @search_params[:experience_level]),
+                        { prompt: "Any level" },
+                        { class: "input w-full" } %>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-theme-foreground">Availability</label>
+                    <%= f.select :availability,
+                        options_for_select(@availability_options, @search_params[:availability]),
+                        { prompt: "Any availability" },
+                        { class: "input w-full" } %>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-theme-foreground">Hourly Rate</label>
+                    <div class="flex gap-3">
+                      <%= f.number_field :min_rate,
+                          placeholder: "Min ($)",
+                          value: @search_params[:min_rate],
+                          class: "input w-full rounded-2xl" %>
+                      <%= f.number_field :max_rate,
+                          placeholder: "Max ($)",
+                          value: @search_params[:max_rate],
+                          class: "input w-full rounded-2xl" %>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <%= f.submit "Apply Filters", class: "btn btn-primary rounded-full px-6" %>
+                  <%= link_to "Reset All", directory_path, class: "btn btn-outline rounded-full" %>
+                </div>
+              </div>
             <% end %>
+          </div>
+
+          <div class="grid gap-6 text-sm text-theme-muted md:grid-cols-3">
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span class="text-base font-semibold text-theme-primary">Top 2%</span>
+              </div>
+              <p>Only vetted marketers make the directory</p>
+            </div>
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+                <span class="text-base font-semibold text-theme-primary">Flexible budgets</span>
+              </div>
+              <p>Filter by rate, engagement type, and availability</p>
+            </div>
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-base font-semibold text-theme-primary">Ready to hire</span>
+              </div>
+              <p>Every profile includes availability and testimonials</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Directory Results -->
+    <section class="section">
+      <div class="section-content space-y-12">
+        <div class="section-header section-header-left">
+          <span class="section-kicker">Directory</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">Marketing Experts That Match Your Brief</h2>
+          <p class="text-lg text-theme-muted">
+            <%= @search_params[:query].present? ? "Showing #{@marketer_profiles.size} of #{@total_count} results for “#{@search_params[:query]}”." : "Showing #{@marketer_profiles.size} featured marketers. Use filters to narrow in on the right fit." %>
           </p>
         </div>
-        <div class="flex items-center space-x-3">
-          <button id="toggle-advanced-filters" class="btn btn-outline">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-            </svg>
-            <span class="filter-text">Advanced Filters</span>
-          </button>
-          <% if user_signed_in? && !current_user.marketer? %>
-            <%= link_to new_marketer_profile_path, class: "btn btn-primary" do %>
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Join Directory
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    </div>
 
-    <!-- Search & Filters -->
-    <div class="card mb-8">
-      <div class="card-body">
-        <%= form_with url: marketers_path, method: :get, local: true, class: "space-y-6", id: "search-form" do |f| %>
-
-          <!-- Main Search Bar -->
-          <div class="flex gap-4">
-            <div class="flex-1">
-              <%= f.text_field :query,
-                  placeholder: "Search by name, skills, or expertise...",
-                  value: @search_params[:query],
-                  class: "input w-full text-lg",
-                  autocomplete: "off" %>
-            </div>
-            <div class="flex items-center space-x-2">
-              <%= f.select :sort,
-                  options_for_select(@sort_options.map { |s| [s.humanize, s] }, @search_params[:sort]),
-                  { prompt: "Sort by..." },
-                  { class: "input" } %>
-              <%= f.submit "Search", class: "btn btn-primary px-6" %>
-            </div>
-          </div>
-
-          <!-- Quick Filters -->
-          <div class="flex flex-wrap gap-3">
-            <% if @search_params.any? { |k, v| v.present? && k != 'query' && k != 'sort' } %>
-              <%= link_to "Clear Filters", marketers_path, class: "btn btn-outline btn-sm" %>
-            <% end %>
-
-            <!-- Active Filter Tags -->
-            <% if @search_params[:location_id].present? %>
-              <% location = @locations.find { |l| l.id.to_s == @search_params[:location_id].to_s } %>
-              <% if location %>
-                <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
-                  📍 <%= location.name %>
-                  <%= link_to marketers_path(@search_params.except(:location_id)), class: "ml-2 hover:text-red-600" do %>
-                    ×
-                  <% end %>
-                </span>
-              <% end %>
-            <% end %>
-
-            <% if @search_params[:experience_level].present? %>
-              <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
-                🎯 <%= @search_params[:experience_level].humanize %>
-                <%= link_to marketers_path(@search_params.except(:experience_level)), class: "ml-2 hover:text-red-600" do %>
-                  ×
-                <% end %>
-              </span>
-            <% end %>
-
-            <% if @search_params[:min_rate].present? || @search_params[:max_rate].present? %>
-              <span class="inline-flex items-center px-3 py-1 text-sm rounded-full" style="background-color: var(--color-accent); color: var(--color-accent-foreground);">
-                💰 $<%= @search_params[:min_rate] || '0' %> - $<%= @search_params[:max_rate] || '∞' %>/hr
-                <%= link_to marketers_path(@search_params.except(:min_rate, :max_rate)), class: "ml-2 hover:text-red-600" do %>
-                  ×
-                <% end %>
-              </span>
-            <% end %>
-          </div>
-
-          <!-- Advanced Filters Panel -->
-          <div id="advanced-filters" class="border-t pt-6" style="border-color: var(--color-border); display: none;">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-              <!-- Skills Filter -->
-              <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Skills</label>
-                <%= f.select :skill_ids,
-                    options_from_collection_for_select(@skills, :id, :name, @search_params[:skill_ids]),
-                    { prompt: "All Skills" },
-                    { class: "input w-full", multiple: true } %>
-              </div>
-
-              <!-- Location Filter -->
-              <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Location</label>
-                <%= f.select :location_id,
-                    options_from_collection_for_select(@locations, :id, :name, @search_params[:location_id]),
-                    { prompt: "All Locations" },
-                    { class: "input w-full" } %>
-              </div>
-
-              <!-- Experience Level -->
-              <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Experience Level</label>
-                <%= f.select :experience_level,
-                    options_for_select(@experience_levels.map { |level| [level.humanize, level] }, @search_params[:experience_level]),
-                    { prompt: "Any Level" },
-                    { class: "input w-full" } %>
-              </div>
-
-              <!-- Availability -->
-              <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Availability</label>
-                <%= f.select :availability,
-                    options_for_select(@availability_options, @search_params[:availability]),
-                    { prompt: "Any Availability" },
-                    { class: "input w-full" } %>
-              </div>
-
-              <!-- Rate Range -->
-              <div class="md:col-span-2">
-                <label class="block text-sm font-medium mb-2" style="color: var(--color-foreground);">Hourly Rate</label>
-                <div class="flex space-x-2">
-                  <%= f.number_field :min_rate,
-                      placeholder: "Min ($)",
-                      value: @search_params[:min_rate],
-                      class: "input w-full" %>
-                  <%= f.number_field :max_rate,
-                      placeholder: "Max ($)",
-                      value: @search_params[:max_rate],
-                      class: "input w-full" %>
-                </div>
-              </div>
-
-              <!-- Filter Actions -->
-              <div class="flex items-end space-x-2">
-                <%= f.submit "Apply Filters", class: "btn btn-primary" %>
-                <%= link_to "Reset", marketers_path, class: "btn btn-outline" %>
-              </div>
-            </div>
-          </div>
-
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Results -->
-    <% if @marketer_profiles.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% @marketer_profiles.each do |profile| %>
-          <div class="card">
-            <div class="card-body">
-              <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
-                  <%= profile.account.name.first(2).upcase %>
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-start justify-between">
-                    <div>
-                      <h3 class="font-semibold" style="color: var(--color-foreground);"><%= profile.account.name %></h3>
-                      <p class="text-sm" style="color: var(--color-muted-foreground);"><%= profile.title %></p>
-                      <% if profile.location %>
-                        <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">📍 <%= profile.location.name %></p>
-                      <% end %>
+        <% if @marketer_profiles.any? %>
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <% @marketer_profiles.each do |profile| %>
+              <article class="card card-elevated flex h-full flex-col">
+                <div class="card-body space-y-5">
+                  <div class="flex items-start gap-4">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-full bg-theme-primary text-lg font-semibold text-white">
+                      <%= profile.account.name.first(2).upcase %>
                     </div>
-                    <div class="text-right">
-                      <p class="font-semibold" style="color: var(--color-foreground);"><%= profile.display_rate %></p>
-                      <div class="flex items-center mt-1">
-                        <div class="flex text-yellow-400">
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                    <div class="flex-1 space-y-2">
+                      <div class="flex flex-col gap-1">
+                        <h3 class="text-xl font-semibold text-theme-foreground"><%= profile.account.name %></h3>
+                        <p class="text-sm text-theme-muted"><%= profile.title %></p>
+                        <% if profile.location %>
+                          <p class="text-xs font-medium uppercase tracking-wide text-theme-muted">📍 <%= profile.location.name %></p>
+                        <% end %>
+                      </div>
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm font-semibold text-theme-primary"><%= profile.display_rate %></span>
+                        <% rating = profile.star_rating %>
+                        <div class="flex items-center gap-1">
+                          <div class="flex">
+                            <% 5.times do |index| %>
+                              <svg class="h-4 w-4 <%= index < rating ? 'text-yellow-400' : 'text-gray-300' %>" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                              </svg>
+                            <% end %>
+                          </div>
+                          <span class="text-xs text-theme-muted">
+                            <%= profile.total_reviews.positive? ? profile.display_rating : "New to HeyMarketers" %>
+                          </span>
                         </div>
-                        <span class="text-xs ml-1" style="color: var(--color-muted-foreground);">5.0 (12)</span>
                       </div>
                     </div>
                   </div>
-                  <p class="text-sm mt-3" style="color: var(--color-muted-foreground);">
-                    <%= truncate(profile.bio, length: 120) %>
+
+                  <p class="text-sm leading-relaxed text-theme-muted">
+                    <%= truncate(profile.bio, length: 140) %>
                   </p>
-                  <div class="flex items-center justify-between mt-4">
-                    <div class="flex space-x-2">
-                      <% if profile.skills.any? %>
-                        <% profile.skills.limit(1).each do |skill| %>
-                          <span class="badge badge-primary"><%= skill.name %></span>
-                        <% end %>
-                        <% profile.skills.offset(1).limit(2).each do |skill| %>
-                          <span class="badge badge-outline"><%= skill.name %></span>
-                        <% end %>
-                        <% if profile.skills.count > 3 %>
-                          <span class="badge badge-outline">+<%= profile.skills.count - 3 %> more</span>
-                        <% end %>
+
+                  <% if profile.skills.any? %>
+                    <div class="flex flex-wrap gap-2">
+                      <% profile.skills.limit(3).each do |skill| %>
+                        <span class="badge badge-secondary"><%= skill.name %></span>
+                      <% end %>
+                      <% if profile.skills.count > 3 %>
+                        <span class="badge badge-outline">+<%= profile.skills.count - 3 %> more</span>
                       <% end %>
                     </div>
-                    <%= link_to "Contact", marketer_path(profile), class: "btn btn-primary btn-sm" %>
+                  <% end %>
+                </div>
+                <div class="mt-auto border-t border-black/5 px-6 py-4">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-accent-foreground)]">
+                      <%= profile.availability.present? ? profile.availability.humanize : "Available" %>
+                    </div>
+                    <%= link_to "View Profile", marketer_path(profile), class: "btn btn-primary btn-sm rounded-full px-5" %>
                   </div>
                 </div>
+              </article>
+            <% end %>
+          </div>
+
+          <div class="flex justify-center">
+            <%= paginate @marketer_profiles, params: @search_params %>
+          </div>
+        <% else %>
+          <div class="mx-auto max-w-2xl">
+            <article class="card card-elevated text-center">
+              <div class="card-body space-y-4">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-accent)]">
+                  <svg class="h-8 w-8 text-theme-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-theme-foreground">No marketers match those filters yet</h3>
+                <p class="text-sm text-theme-muted">
+                  Try widening your search or clearing filters to see all available experts.
+                </p>
+                <%= link_to "Clear Filters", directory_path, class: "btn btn-outline btn-lg rounded-full" %>
               </div>
-            </div>
+            </article>
           </div>
         <% end %>
       </div>
+    </section>
 
-      <!-- Pagination -->
-      <div class="mt-8 flex justify-center">
-        <%= paginate @marketer_profiles, params: @search_params %>
-      </div>
-    <% else %>
-      <!-- Empty State -->
-      <div class="text-center py-12">
-        <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background-color: var(--color-accent);">
-          <svg class="w-8 h-8" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-medium mb-2" style="color: var(--color-foreground);">No marketers found</h3>
-        <p class="text-sm mb-6" style="color: var(--color-muted-foreground);">Try adjusting your filters or browse all marketers</p>
-        <%= link_to "Clear Filters", marketers_path, class: "btn btn-outline" %>
-      </div>
-    <% end %>
-
-    <!-- Call to Action -->
     <% if user_signed_in? && !current_user.marketer? %>
-      <div class="mt-12 text-center">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-lg font-semibold mb-2" style="color: var(--color-foreground);">Are you a marketing professional?</h3>
-            <p class="text-sm mb-4" style="color: var(--color-muted-foreground);">Join our directory and connect with businesses looking for your expertise</p>
-            <%= link_to "Create Your Profile", new_marketer_profile_path, class: "btn btn-primary" %>
+      <section class="section bg-theme-secondary">
+        <div class="section-content">
+          <div class="card card-elevated mx-auto max-w-4xl text-center">
+            <div class="card-body space-y-4">
+              <span class="section-kicker mx-auto w-fit bg-white text-theme-primary">For marketers</span>
+              <h3 class="text-2xl font-bold text-theme-foreground">Get discovered by clients looking for your expertise</h3>
+              <p class="text-lg text-theme-muted">
+                Create a profile in minutes and join the top 2% of marketers trusted by growth teams worldwide.
+              </p>
+              <%= link_to "Create Your Profile", new_marketer_profile_path, class: "btn btn-primary btn-lg rounded-full px-10" %>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     <% end %>
   </div>
-</div>
+</main>
 
-<!-- JavaScript for Advanced Search Functionality -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Advanced Filters Toggle
   const toggleButton = document.getElementById('toggle-advanced-filters');
   const advancedFilters = document.getElementById('advanced-filters');
-  const filterText = toggleButton.querySelector('.filter-text');
+  const filterText = toggleButton ? toggleButton.querySelector('.filter-text') : null;
 
-  if (toggleButton && advancedFilters) {
+  if (toggleButton && advancedFilters && filterText) {
     toggleButton.addEventListener('click', function() {
       const isVisible = advancedFilters.style.display !== 'none';
 
@@ -275,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Show advanced filters if any advanced filters are active
     const hasAdvancedFilters = <%= (@search_params[:skill_ids].present? ||
                                    @search_params[:experience_level].present? ||
                                    @search_params[:availability].present? ||
@@ -288,7 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Auto-submit form on sort change
   const sortSelect = document.querySelector('select[name="sort"]');
   if (sortSelect) {
     sortSelect.addEventListener('change', function() {
@@ -296,7 +352,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Real-time search with debouncing
   const searchInput = document.querySelector('input[name="query"]');
   if (searchInput) {
     let searchTimeout;
@@ -305,11 +360,10 @@ document.addEventListener('DOMContentLoaded', function() {
       clearTimeout(searchTimeout);
 
       searchTimeout = setTimeout(() => {
-        // Only auto-submit if user has typed at least 3 characters or cleared the field
         if (this.value.length >= 3 || this.value.length === 0) {
           this.form.submit();
         }
-      }, 500); // 500ms delay
+      }, 500);
     });
   }
 });
