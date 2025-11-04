@@ -361,14 +361,30 @@ This structure allows:
 - ✅ **Component System**: Documented design system with standardized classes (.btn, .card, .badge, .input)
 - ✅ **Documentation**: Comprehensive design guidelines in CLAUDE.md
 
-### **Phase 4: Monetization** 🔄 **NEXT**
+### **Phase 4: SEO Content & Directory Expansion** 🔄 **NEXT**
+- **Job Description Pages** (`/job-description/[job-title]`)
+  - Programmatically generated pages for common marketing roles
+  - SEO-optimized content for job descriptions, responsibilities, requirements
+  - Target high-intent keywords like "marketing manager job description"
+  - CTAs to "Find [Job Title]s" and "Post This Job"
+  - Internal linking to actual job listings and marketer profiles
+  - Schema markup for job descriptions
+- **Marketing Agencies Directory** (`/agencies`)
+  - New `Agency` model with profile fields
+  - Agency profiles with team size, services, case studies, portfolio
+  - Individual agency pages (`/agencies/[agency-slug]`)
+  - Search/filter by services, location, team size, industry focus
+  - Connection to individual marketers who work at agencies
+  - Lead generation for agencies
+
+### **Phase 5: Monetization** 📋 **PLANNED**
 - Stripe Connect for marketplace payments
 - Featured listings / visibility boosts
 - Subscription tiers (for marketers)
 - Premium messaging features
 - Advanced analytics for premium users
 
-### **Phase 5: Enterprise Features** 📋 **PLANNED**
+### **Phase 6: Enterprise Features** 📋 **PLANNED**
 - Team / agency accounts with multi-user management
 - Admin workflow for vetting and managed service
 - White-label solutions for larger clients
