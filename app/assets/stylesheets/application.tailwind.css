@@ -336,3 +336,109 @@
 .join-item:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
+
+.section {
+  @apply relative py-16 md:py-24;
+}
+
+.section-content {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.section-header {
+  @apply mx-auto max-w-3xl space-y-3 text-center;
+}
+
+.section-header-left {
+  @apply mx-0 text-left;
+}
+
+.text-theme-foreground {
+  color: var(--color-foreground);
+}
+
+.text-theme-muted {
+  color: var(--color-muted-foreground);
+}
+
+.text-theme-primary {
+  color: var(--color-primary);
+}
+
+.text-theme-background {
+  color: var(--color-background);
+}
+
+.bg-theme-background {
+  background-color: var(--color-background);
+}
+
+.bg-theme-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-theme-foreground {
+  background-color: var(--color-foreground);
+}
+
+.bg-theme-primary {
+  background-color: var(--color-primary);
+}
+
+.section-kicker {
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-elevated {
+  border: none;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-elevated:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-elevated .card-body {
+  padding: 1.75rem;
+}
+
+.card-step {
+  @apply text-left md:text-center;
+  background: linear-gradient(180deg, rgba(233, 242, 231, 0.35) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.card-step-icon {
+  @apply flex items-center justify-center rounded-full;
+  width: 3.75rem;
+  height: 3.75rem;
+  background-color: rgba(69, 127, 61, 0.12);
+  color: var(--color-primary);
+}
+
+.tile-option {
+  @apply flex items-center justify-between gap-3 rounded-2xl px-5 py-3 text-sm font-medium transition-all;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.tile-option:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.stat-block {
+  @apply text-center;
+}
+
+.stat-block p {
+  @apply text-sm;
+  color: var(--color-muted-foreground);
+}

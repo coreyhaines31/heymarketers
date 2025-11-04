@@ -1,347 +1,488 @@
-<!-- Dashboard-style Layout -->
-<div class="min-h-screen" style="background-color: var(--color-background);">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <!-- Header Stats Section -->
-    <div class="mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-bold" style="color: var(--color-foreground);">Find Your Perfect Marketing Expert</h1>
-          <p class="mt-1" style="color: var(--color-muted-foreground);">Connect with top marketing professionals across every discipline</p>
-        </div>
-        <div class="flex items-center space-x-3">
-          <button class="btn btn-outline">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
-            </svg>
-            Filters
-          </button>
-          <button class="btn btn-primary">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Post Job
-          </button>
-        </div>
-      </div>
-
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="card">
-          <div class="card-body">
-            <div class="flex items-center">
-              <div class="p-2 rounded-lg" style="background-color: var(--color-accent);">
-                <svg class="w-6 h-6" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+<main class="bg-theme-background">
+  <div class="space-y-24 pb-24">
+    <!-- Hero -->
+    <section class="section overflow-hidden bg-gradient-to-br from-[var(--color-background)] via-[var(--color-accent)]/70 to-[var(--color-accent)]">
+      <div class="section-content">
+        <div class="mx-auto max-w-4xl space-y-12 text-center">
+          <div class="space-y-4">
+            <span class="section-kicker">
+              Trusted by 2,800+ growth teams
+            </span>
+            <h1 class="font-serif text-4xl font-bold leading-tight text-theme-foreground md:text-5xl lg:text-6xl">
+              Find Your Perfect
+              <span class="block text-theme-primary">Marketing Expert</span>
+            </h1>
+            <p class="text-lg text-theme-muted md:text-xl">
+              Connect with vetted marketing professionals who can transform your business growth. From strategy to execution, find the expertise you need.
+            </p>
+          </div>
+          <div class="rounded-3xl bg-white/90 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div class="relative w-full">
+                <label for="homepage-search" class="sr-only">Search for marketers</label>
+                <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
+                <input
+                  id="homepage-search"
+                  type="text"
+                  placeholder="Search for SEO, PPC, Content Marketing, Social Media..."
+                  class="input w-full rounded-2xl border border-transparent bg-white pr-4 py-3 text-base font-medium text-theme-foreground shadow-none focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                  style="padding-left: 3.5rem;"
+                />
               </div>
-              <div class="ml-4">
-                <p class="text-sm" style="color: var(--color-muted-foreground);">Total Marketers</p>
-                <p class="text-2xl font-bold" style="color: var(--color-foreground);">2,847</p>
-              </div>
+              <button class="btn btn-primary w-full rounded-2xl px-10 text-base sm:w-auto">
+                Find Marketers
+              </button>
             </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <div class="flex items-center">
-              <div class="p-2 rounded-lg" style="background-color: var(--color-accent);">
-                <svg class="w-6 h-6" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 002 2h2a1 1 0 011 1v3M16 6H8m0 0v12a4 4 0 004 4h4a4 4 0 004-4V6" />
+          <div class="grid gap-6 text-sm text-theme-muted md:grid-cols-3">
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
+                <span class="text-base font-semibold text-theme-primary">4.9/5</span>
               </div>
-              <div class="ml-4">
-                <p class="text-sm" style="color: var(--color-muted-foreground);">Active Projects</p>
-                <p class="text-2xl font-bold" style="color: var(--color-foreground);">184</p>
-              </div>
+              <p>Average rating across platform hires</p>
             </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <div class="flex items-center">
-              <div class="p-2 rounded-lg" style="background-color: var(--color-accent);">
-                <svg class="w-6 h-6" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-base font-semibold text-theme-primary">$2M+</span>
+              </div>
+              <p>In projects shipped through HeyMarketers</p>
+            </div>
+            <div class="stat-block space-y-2">
+              <div class="flex items-center justify-center gap-2 text-theme-primary">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
+                <span class="text-base font-semibold text-theme-primary">100%</span>
               </div>
-              <div class="ml-4">
-                <p class="text-sm" style="color: var(--color-muted-foreground);">Completed Jobs</p>
-                <p class="text-2xl font-bold" style="color: var(--color-foreground);">1,205</p>
-              </div>
+              <p>Verified professionals ready to start now</p>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="card">
-          <div class="card-body">
-            <div class="flex items-center">
-              <div class="p-2 rounded-lg" style="background-color: var(--color-accent);">
-                <svg class="w-6 h-6" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
+    <!-- Rotating Marketer Preview Cards -->
+    <section class="section">
+      <div class="section-content space-y-12">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">Browse talent</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            Marketing Experts Ready to Help
+          </h2>
+          <p class="text-lg text-theme-muted">
+            Browse through our diverse pool of marketing professionals
+          </p>
+        </div>
+        <div class="relative overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-black/5" data-controller="carousel">
+          <div class="flex transition-transform duration-500 ease-in-out" data-carousel-target="track">
+            <% [
+              { name: "Sarah Chen", role: "Growth Marketing", rate: "$85/hr", rating: "4.9", reviews: "32", skills: ["SEO", "SEM", "Analytics"], avatar: "SC" },
+              { name: "Marcus Rodriguez", role: "Performance Marketing", rate: "$95/hr", rating: "4.8", reviews: "28", skills: ["PPC", "Facebook Ads", "Google Ads"], avatar: "MR" },
+              { name: "Emily Watson", role: "Brand Strategy", rate: "$110/hr", rating: "5.0", reviews: "18", skills: ["Brand", "Creative", "PR"], avatar: "EW" },
+              { name: "David Kim", role: "Content Marketing", rate: "$75/hr", rating: "4.7", reviews: "45", skills: ["Content", "SEO", "Copywriting"], avatar: "DK" },
+              { name: "Lisa Thompson", role: "Social Media", rate: "$65/hr", rating: "4.9", reviews: "52", skills: ["Instagram", "TikTok", "LinkedIn"], avatar: "LT" },
+              { name: "Alex Johnson", role: "Email Marketing", rate: "$70/hr", rating: "4.8", reviews: "38", skills: ["Automation", "Campaigns", "CRM"], avatar: "AJ" }
+            ].each do |marketer| %>
+              <div class="w-full flex-shrink-0 px-3 md:w-1/3">
+                <article class="card card-elevated h-full">
+                  <div class="card-body space-y-6">
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="flex items-start gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-theme-primary font-semibold text-white">
+                          <%= marketer[:avatar] %>
+                        </div>
+                        <div>
+                          <h3 class="font-semibold text-theme-foreground"><%= marketer[:name] %></h3>
+                          <p class="text-sm text-theme-muted"><%= marketer[:role] %></p>
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <p class="font-semibold text-theme-primary"><%= marketer[:rate] %></p>
+                        <div class="flex items-center justify-end gap-1 text-xs text-theme-muted">
+                          <svg class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                          </svg>
+                          <span><%= marketer[:rating] %> (<%= marketer[:reviews] %>)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      <% marketer[:skills].each do |skill| %>
+                        <span class="badge badge-outline"><%= skill %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </article>
               </div>
-              <div class="ml-4">
-                <p class="text-sm" style="color: var(--color-muted-foreground);">Avg Rate</p>
-                <p class="text-2xl font-bold" style="color: var(--color-foreground);">$95/hr</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Marketers -->
+    <section class="section bg-theme-secondary">
+      <div class="section-content space-y-12">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">Top performers</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            Featured Marketing Experts
+          </h2>
+          <p class="text-lg text-theme-muted">
+            Top-rated professionals with proven track records
+          </p>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <% 6.times do %>
+            <article class="card card-elevated h-full">
+              <div class="card-body space-y-6">
+                <div class="flex items-center gap-4">
+                  <div class="flex h-16 w-16 items-center justify-center rounded-full bg-theme-primary text-lg font-semibold text-white">
+                    JD
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="text-lg font-semibold text-theme-foreground">Jane Doe</h3>
+                    <p class="text-sm text-theme-muted">Digital Marketing Strategist</p>
+                    <div class="flex items-center gap-1">
+                      <% 5.times do %>
+                        <svg class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                      <% end %>
+                      <span class="ml-1 text-xs text-theme-muted">5.0 (47 reviews)</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm leading-relaxed text-theme-muted">
+                  10+ years helping B2B SaaS companies scale from $1M to $50M ARR through data-driven growth strategies.
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="badge badge-primary">Growth</span>
+                  <span class="badge badge-secondary">B2B</span>
+                  <span class="badge badge-accent">SaaS</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-lg font-semibold text-theme-primary">$125/hr</span>
+                  <button class="btn btn-primary btn-sm rounded-full">View Profile</button>
+                </div>
               </div>
+            </article>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary btn-lg rounded-full">
+            Browse All Marketers
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+      <div class="section-content space-y-12">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">Simple process</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            How It Works
+          </h2>
+          <p class="text-lg text-theme-muted">
+            Connect with marketing experts in just a few simple steps
+          </p>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <% [
+            { step: "1", title: "Search & Browse", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", desc: "Search by skill, industry, or marketing channel to find your perfect match" },
+            { step: "2", title: "Review Profiles", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", desc: "Explore detailed profiles, portfolios, and client reviews" },
+            { step: "3", title: "Connect & Chat", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z", desc: "Message marketers directly to discuss your project needs" },
+            { step: "4", title: "Start Growing", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6", desc: "Hire with confidence and watch your business grow" }
+          ].each do |step| %>
+            <article class="card card-elevated card-step h-full">
+              <div class="card-body flex h-full flex-col items-center gap-5">
+                <div class="card-step-icon">
+                  <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= step[:icon] %>" />
+                  </svg>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-theme-primary">Step <%= step[:step] %></p>
+                  <h3 class="text-lg font-semibold text-theme-foreground"><%= step[:title] %></h3>
+                  <p class="text-sm text-theme-muted"><%= step[:desc] %></p>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Specializations & Tools -->
+    <section class="section bg-theme-secondary">
+      <div class="section-content space-y-12">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">Deep expertise</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            Marketing Specializations &amp; Tools
+          </h2>
+          <p class="text-lg text-theme-muted">
+            Find experts across every marketing discipline and platform
+          </p>
+        </div>
+        <div class="grid gap-10 lg:grid-cols-2">
+          <div class="space-y-6">
+            <h3 class="text-xl font-semibold text-theme-foreground">Specializations</h3>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <% [
+                "Growth Marketing", "Performance Marketing", "Content Marketing", "SEO",
+                "Social Media Marketing", "Email Marketing", "Brand Strategy", "PPC",
+                "Influencer Marketing", "Video Marketing", "B2B Marketing", "B2C Marketing",
+                "Product Marketing", "Affiliate Marketing", "Mobile Marketing", "Marketing Analytics"
+              ].each do |spec| %>
+                <a href="#" class="tile-option">
+                  <span><%= spec %></span>
+                  <svg class="h-4 w-4 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              <% end %>
+            </div>
+          </div>
+          <div class="space-y-6">
+            <h3 class="text-xl font-semibold text-theme-foreground">Tools &amp; Platforms</h3>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <% [
+                "Google Ads", "Facebook Ads", "LinkedIn Ads", "Google Analytics",
+                "HubSpot", "Salesforce", "Mailchimp", "Klaviyo",
+                "SEMrush", "Ahrefs", "Hootsuite", "Buffer",
+                "Canva", "Adobe Creative Suite", "WordPress", "Shopify"
+              ].each do |tool| %>
+                <a href="#" class="tile-option">
+                  <span><%= tool %></span>
+                  <svg class="h-4 w-4 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              <% end %>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+      <div class="section-content space-y-12">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">Social proof</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            What Clients Are Saying
+          </h2>
+          <p class="text-lg text-theme-muted">
+            Real success stories from businesses like yours
+          </p>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <% [
+            { company: "TechStart Inc.", role: "CEO", name: "Michael Chen", text: "Found an amazing growth marketer who helped us triple our MRR in just 6 months. The vetting process gave us confidence we were hiring the right expert." },
+            { company: "Bloom Beauty", role: "Marketing Director", name: "Sarah Williams", text: "HeyMarketers connected us with a social media expert who transformed our Instagram presence. Our engagement rate increased by 400%!" },
+            { company: "CloudScale SaaS", role: "Founder", name: "David Park", text: "The PPC specialist we hired optimized our campaigns and reduced our CAC by 60% while maintaining quality. Incredible ROI on this hire." }
+          ].each do |testimonial| %>
+            <article class="card card-elevated h-full">
+              <div class="card-body space-y-5">
+                <div class="flex text-yellow-400">
+                  <% 5.times do %>
+                    <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  <% end %>
+                </div>
+                <p class="text-theme-muted">
+                  "<%= testimonial[:text] %>"
+                </p>
+                <div class="border-t border-[var(--color-border)] pt-4">
+                  <p class="font-semibold text-theme-foreground"><%= testimonial[:name] %></p>
+                  <p class="text-sm text-theme-muted"><%= testimonial[:role] %>, <%= testimonial[:company] %></p>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Join as Marketer CTA -->
+    <section class="section">
+      <div class="section-content">
+        <div class="mx-auto max-w-5xl rounded-3xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-accent)] px-8 py-16 text-center text-white shadow-2xl">
+          <div class="mx-auto max-w-3xl space-y-6">
+            <span class="section-kicker mx-auto bg-white/15 text-white">For marketers</span>
+            <h2 class="text-3xl font-bold md:text-4xl">
+              Are You a Marketing Expert?
+            </h2>
+            <p class="text-lg text-white/90 md:text-xl">
+              Join thousands of marketing professionals already growing their freelance business
+            </p>
+            <div class="grid gap-6 md:grid-cols-3">
+              <div class="space-y-1">
+                <div class="text-3xl font-semibold">$95/hr</div>
+                <p class="text-sm uppercase tracking-wide text-white/80">Average Rate</p>
+              </div>
+              <div class="space-y-1">
+                <div class="text-3xl font-semibold">500+</div>
+                <p class="text-sm uppercase tracking-wide text-white/80">Active Projects</p>
+              </div>
+              <div class="space-y-1">
+                <div class="text-3xl font-semibold">2-3 days</div>
+                <p class="text-sm uppercase tracking-wide text-white/80">Avg. Time to First Client</p>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-lg rounded-full px-8">
+              Apply to Join as a Marketer
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section bg-theme-secondary">
+      <div class="section-content">
+        <div class="mx-auto max-w-3xl space-y-6 rounded-3xl bg-white p-12 text-center shadow-2xl ring-1 ring-black/5">
+          <span class="section-kicker mx-auto">Get started</span>
+          <h2 class="text-3xl font-bold text-theme-foreground md:text-4xl">
+            Ready to Accelerate Your Growth?
+          </h2>
+          <p class="text-lg text-theme-muted md:text-xl">
+            Join thousands of businesses that have found their perfect marketing partner
+          </p>
+          <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <button class="btn btn-primary btn-lg rounded-full px-8">
+              Create Free Account
+            </button>
+            <button class="btn btn-outline btn-lg rounded-full px-8">
+              Browse Marketers
+            </button>
+          </div>
+          <p class="text-sm text-theme-muted">
+            No credit card required • Free to browse • Pay only when you hire
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <div class="section-content space-y-10">
+        <div class="section-header space-y-4">
+          <span class="section-kicker">FAQs</span>
+          <h2 class="text-3xl font-bold text-theme-foreground">
+            Frequently Asked Questions
+          </h2>
+        </div>
+        <div class="mx-auto max-w-4xl space-y-4">
+          <% [
+            { q: "How are marketers vetted?", a: "Every marketer goes through a rigorous vetting process including portfolio review, skill assessments, and reference checks. Only the top 10% of applicants are accepted." },
+            { q: "What if I'm not satisfied with a marketer?", a: "We offer a 100% satisfaction guarantee. If you're not happy with your marketer in the first week, we'll help you find a replacement at no additional cost." },
+            { q: "How does pricing work?", a: "Marketers set their own hourly or project rates. You can filter by budget and negotiate directly with marketers. We charge a small platform fee only when you hire." },
+            { q: "Can I hire marketers for long-term projects?", a: "Absolutely! Many of our clients work with marketers on retainer basis for ongoing support. You can hire for one-off projects or long-term engagements." },
+            { q: "What types of businesses use HeyMarketers?", a: "We serve everyone from solopreneurs to Fortune 500 companies. Whether you need help with a specific campaign or a complete marketing overhaul, we have experts for you." },
+            { q: "How quickly can I start working with a marketer?", a: "Most clients connect with marketers within 24 hours. Once you find the right fit, you can start working together immediately." }
+          ].each do |faq| %>
+            <article class="card card-elevated">
+              <div class="card-body">
+                <details class="group">
+                  <summary class="flex cursor-pointer items-center justify-between gap-4">
+                    <h3 class="font-semibold text-theme-foreground"><%= faq[:q] %></h3>
+                    <svg class="h-5 w-5 text-theme-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p class="mt-4 text-sm text-theme-muted">
+                    <%= faq[:a] %>
+                  </p>
+                </details>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="bg-theme-foreground text-theme-background">
+  <div class="section-content space-y-10 py-14">
+    <div class="grid gap-10 md:grid-cols-5">
+      <div class="space-y-4 md:col-span-2">
+        <h3 class="text-xl font-bold">HeyMarketers</h3>
+        <p class="text-sm opacity-80">
+          The premier marketplace connecting businesses with vetted marketing professionals. Find your perfect marketing partner today.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="opacity-80 transition-opacity hover:opacity-100">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+          </a>
+          <a href="#" class="opacity-80 transition-opacity hover:opacity-100">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+            </svg>
+          </a>
+          <a href="#" class="opacity-80 transition-opacity hover:opacity-100">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold">For Businesses</h4>
+        <ul class="space-y-2 text-sm opacity-80">
+          <li><a href="#" class="transition-opacity hover:opacity-100">Find Marketers</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Post a Job</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">How It Works</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Pricing</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Success Stories</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">For Marketers</h4>
+        <ul class="space-y-2 text-sm opacity-80">
+          <li><a href="#" class="transition-opacity hover:opacity-100">Join as Expert</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Browse Jobs</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Resources</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Community</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Success Tips</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">Company</h4>
+        <ul class="space-y-2 text-sm opacity-80">
+          <li><a href="#" class="transition-opacity hover:opacity-100">About Us</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Blog</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Careers</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Contact</a></li>
+          <li><a href="#" class="transition-opacity hover:opacity-100">Help Center</a></li>
+        </ul>
       </div>
     </div>
-
-    <!-- Search Section -->
-    <div class="card mb-8">
-      <div class="card-body">
-        <div class="flex items-center space-x-4">
-          <div class="flex-1">
-            <div class="relative">
-              <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style="color: var(--color-muted-foreground);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search for marketing specialists, skills, or companies..."
-                class="input input-with-icon w-full"
-              />
-            </div>
-          </div>
-          <button class="btn btn-primary px-8">Search</button>
+    <div class="border-t border-white/20 pt-6">
+      <div class="flex flex-col gap-4 text-sm opacity-80 md:flex-row md:items-center md:justify-between">
+        <p>© 2024 HeyMarketers. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="#" class="transition-opacity hover:opacity-100">Privacy Policy</a>
+          <a href="#" class="transition-opacity hover:opacity-100">Terms of Service</a>
+          <a href="#" class="transition-opacity hover:opacity-100">Cookie Policy</a>
         </div>
-
-        <!-- Popular Tags -->
-        <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-sm mr-2" style="color: var(--color-muted-foreground);">Popular:</span>
-          <span class="badge badge-outline">Growth Marketing</span>
-          <span class="badge badge-outline">SEO</span>
-          <span class="badge badge-outline">Social Media</span>
-          <span class="badge badge-outline">Email Marketing</span>
-          <span class="badge badge-outline">PPC</span>
-          <span class="badge badge-outline">Content Strategy</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-      <!-- Featured Marketers -->
-      <div class="lg:col-span-2">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold" style="color: var(--color-foreground);">Featured Marketers</h2>
-          <a href="#" class="text-sm font-medium" style="color: var(--color-primary);">View all →</a>
-        </div>
-
-        <div class="space-y-4">
-          <!-- Marketer Card 1 -->
-          <div class="card">
-            <div class="card-body">
-              <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
-                  SC
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-start justify-between">
-                    <div>
-                      <h3 class="font-semibold" style="color: var(--color-foreground);">Sarah Chen</h3>
-                      <p class="text-sm" style="color: var(--color-muted-foreground);">Growth Marketing Specialist</p>
-                      <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">📍 San Francisco, CA</p>
-                    </div>
-                    <div class="text-right">
-                      <p class="font-semibold" style="color: var(--color-foreground);">$85/hr</p>
-                      <div class="flex items-center mt-1">
-                        <div class="flex text-yellow-400">
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                        </div>
-                        <span class="text-xs ml-1" style="color: var(--color-muted-foreground);">4.9 (25)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="text-sm mt-3" style="color: var(--color-muted-foreground);">Helped 50+ startups achieve 300% growth through data-driven marketing strategies.</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <div class="flex space-x-2">
-                      <span class="badge badge-primary">Growth Hacking</span>
-                      <span class="badge badge-outline">SEO</span>
-                      <span class="badge badge-outline">Analytics</span>
-                    </div>
-                    <button class="btn btn-primary btn-sm">Contact</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Marketer Card 2 -->
-          <div class="card">
-            <div class="card-body">
-              <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
-                  MR
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-start justify-between">
-                    <div>
-                      <h3 class="font-semibold" style="color: var(--color-foreground);">Marcus Rodriguez</h3>
-                      <p class="text-sm" style="color: var(--color-muted-foreground);">Performance Marketing Expert</p>
-                      <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">📍 Austin, TX</p>
-                    </div>
-                    <div class="text-right">
-                      <p class="font-semibold" style="color: var(--color-foreground);">$95/hr</p>
-                      <div class="flex items-center mt-1">
-                        <div class="flex text-yellow-400">
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                        </div>
-                        <span class="text-xs ml-1" style="color: var(--color-muted-foreground);">4.8 (42)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="text-sm mt-3" style="color: var(--color-muted-foreground);">Scaled ad spend from $5K to $500K monthly while maintaining 4x ROAS across multiple channels.</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <div class="flex space-x-2">
-                      <span class="badge badge-secondary">PPC</span>
-                      <span class="badge badge-outline">Facebook Ads</span>
-                      <span class="badge badge-outline">Analytics</span>
-                    </div>
-                    <button class="btn btn-primary btn-sm">Contact</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Marketer Card 3 -->
-          <div class="card">
-            <div class="card-body">
-              <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background-color: var(--color-primary);">
-                  EW
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-start justify-between">
-                    <div>
-                      <h3 class="font-semibold" style="color: var(--color-foreground);">Emily Watson</h3>
-                      <p class="text-sm" style="color: var(--color-muted-foreground);">Brand Marketing Strategist</p>
-                      <p class="text-xs mt-1" style="color: var(--color-muted-foreground);">📍 New York, NY</p>
-                    </div>
-                    <div class="text-right">
-                      <p class="font-semibold" style="color: var(--color-foreground);">$110/hr</p>
-                      <div class="flex items-center mt-1">
-                        <div class="flex text-yellow-400">
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
-                        </div>
-                        <span class="text-xs ml-1" style="color: var(--color-muted-foreground);">5.0 (18)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="text-sm mt-3" style="color: var(--color-muted-foreground);">Built iconic brand identities for Fortune 500 companies and emerging startups.</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <div class="flex space-x-2">
-                      <span class="badge badge-accent">Brand Strategy</span>
-                      <span class="badge badge-outline">Creative Direction</span>
-                      <span class="badge badge-outline">PR</span>
-                    </div>
-                    <button class="btn btn-primary btn-sm">Contact</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="space-y-6">
-
-        <!-- Specializations -->
-        <div class="card">
-          <div class="card-body">
-            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Top Specializations</h3>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="w-2 h-2 rounded-full mr-3" style="background-color: var(--color-primary);"></div>
-                  <span class="text-sm" style="color: var(--color-foreground);">Growth Marketing</span>
-                </div>
-                <span class="text-xs" style="color: var(--color-muted-foreground);">67 experts</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="w-2 h-2 rounded-full mr-3" style="background-color: var(--color-primary);"></div>
-                  <span class="text-sm" style="color: var(--color-foreground);">Performance Marketing</span>
-                </div>
-                <span class="text-xs" style="color: var(--color-muted-foreground);">83 experts</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="w-2 h-2 rounded-full mr-3" style="background-color: var(--color-primary);"></div>
-                  <span class="text-sm" style="color: var(--color-foreground);">Social Media</span>
-                </div>
-                <span class="text-xs" style="color: var(--color-muted-foreground);">156 experts</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="w-2 h-2 rounded-full mr-3" style="background-color: var(--color-primary);"></div>
-                  <span class="text-sm" style="color: var(--color-foreground);">Email Marketing</span>
-                </div>
-                <span class="text-xs" style="color: var(--color-muted-foreground);">45 experts</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class="w-2 h-2 rounded-full mr-3" style="background-color: var(--color-primary);"></div>
-                  <span class="text-sm" style="color: var(--color-foreground);">Brand Marketing</span>
-                </div>
-                <span class="text-xs" style="color: var(--color-muted-foreground);">39 experts</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="card">
-          <div class="card-body">
-            <h3 class="font-semibold mb-4" style="color: var(--color-foreground);">Recent Activity</h3>
-            <div class="space-y-4">
-              <div class="flex items-start space-x-3">
-                <div class="w-2 h-2 rounded-full mt-2" style="background-color: var(--color-primary);"></div>
-                <div>
-                  <p class="text-sm" style="color: var(--color-foreground);">New marketer joined</p>
-                  <p class="text-xs" style="color: var(--color-muted-foreground);">2 minutes ago</p>
-                </div>
-              </div>
-              <div class="flex items-start space-x-3">
-                <div class="w-2 h-2 rounded-full mt-2" style="background-color: var(--color-primary);"></div>
-                <div>
-                  <p class="text-sm" style="color: var(--color-foreground);">Project completed</p>
-                  <p class="text-xs" style="color: var(--color-muted-foreground);">1 hour ago</p>
-                </div>
-              </div>
-              <div class="flex items-start space-x-3">
-                <div class="w-2 h-2 rounded-full mt-2" style="background-color: var(--color-primary);"></div>
-                <div>
-                  <p class="text-sm" style="color: var(--color-foreground);">New job posted</p>
-                  <p class="text-xs" style="color: var(--color-muted-foreground);">3 hours ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
-</div>
+</footer>
