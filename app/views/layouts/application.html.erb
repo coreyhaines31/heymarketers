@@ -27,7 +27,7 @@
 
           <!-- Desktop Navigation -->
           <div class="hidden lg:flex items-center space-x-1">
-            <%= link_to "Find Marketers", marketers_path, class: "px-3 py-2 text-sm font-medium transition-colors hover:bg-opacity-80", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
+            <%= link_to "Find Marketers", "#", class: "px-3 py-2 text-sm font-medium transition-colors hover:bg-opacity-80", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
             <%= link_to "Post a Job", "#", class: "px-3 py-2 text-sm font-medium transition-colors hover:bg-opacity-80", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
             <%= link_to "How It Works", "#", class: "px-3 py-2 text-sm font-medium transition-colors hover:bg-opacity-80", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
           </div>
@@ -56,7 +56,7 @@
         <!-- Mobile Navigation Menu -->
         <div class="lg:hidden hidden" id="mobile-menu">
           <div class="px-2 pt-2 pb-3 space-y-1 border-t" style="background-color: var(--color-card); border-color: var(--color-border);">
-            <%= link_to "Find Marketers", marketers_path, class: "block px-3 py-2 text-base font-medium transition-colors", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
+            <%= link_to "Find Marketers", "#", class: "block px-3 py-2 text-base font-medium transition-colors", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
             <%= link_to "Post a Job", "#", class: "block px-3 py-2 text-base font-medium transition-colors", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
             <%= link_to "How It Works", "#", class: "block px-3 py-2 text-base font-medium transition-colors", style: "color: var(--color-muted-foreground); border-radius: var(--radius);" %>
             <% if user_signed_in? %>
