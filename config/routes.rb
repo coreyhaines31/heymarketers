@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   # Job board - public listings
   get "jobs", to: "job_listings#index"
-  get "jobs/:id", to: "job_listings#show", as: :job
+  get "jobs/:slug", to: "job_listings#show", as: :job, constraints: { slug: /[a-z0-9\-]+/ }
 
   # Main directory (remove redundant /marketers path)
   get "directory", to: "marketer_profiles#index"

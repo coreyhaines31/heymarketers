@@ -68,6 +68,7 @@ class JobListing < ApplicationRecord
   end
 
   before_create :set_posted_at
+  before_save :generate_slug_if_needed
 
   def display_salary
     return "Competitive" if salary_min.blank? && salary_max.blank?
@@ -89,8 +90,9 @@ class JobListing < ApplicationRecord
     expires_at.present? && expires_at < Time.current
   end
 
-  def slug
-    "#{title.parameterize}-#{id}"
+  # Use the slug field from database, or generate one if needed
+  def to_param
+    slug.presence || super
   end
 
   # Favorites methods
@@ -134,5 +136,24 @@ class JobListing < ApplicationRecord
     return unless salary_min.present? && salary_max.present?
 
     errors.add(:salary_max, "must be greater than minimum salary") if salary_max <= salary_min
+  end
+
+  def generate_slug_if_needed
+    return if slug.present? && !title_changed?
+
+    base_slug = title.parameterize
+    # Generate a short unique hash (6 characters)
+    unique_hash = SecureRandom.hex(3)
+
+    # Combine title slug with unique hash
+    new_slug = "#{base_slug}-#{unique_hash}"
+
+    # Ensure uniqueness in case of collision (very unlikely but good practice)
+    while JobListing.exists?(slug: new_slug)
+      unique_hash = SecureRandom.hex(3)
+      new_slug = "#{base_slug}-#{unique_hash}"
+    end
+
+    self.slug = new_slug
   end
 end

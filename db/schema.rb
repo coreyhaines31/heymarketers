@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_04_074901) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_04_082559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -140,6 +140,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_04_074901) do
     t.text "html_description"
     t.text "plain_text_description"
     t.datetime "last_synced_at"
+    t.string "slug"
     t.index ["arrangement"], name: "index_job_listings_on_arrangement"
     t.index ["company_profile_id"], name: "index_job_listings_on_company_profile_id"
     t.index ["employment_type"], name: "index_job_listings_on_employment_type"
@@ -152,6 +153,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_04_074901) do
     t.index ["remote_ok"], name: "index_job_listings_on_remote_ok"
     t.index ["salary_min", "salary_max"], name: "index_job_listings_on_salary_min_and_salary_max"
     t.index ["search_vector"], name: "index_job_listings_on_search_vector", using: :gin
+    t.index ["slug"], name: "index_job_listings_on_slug"
   end
 
   create_table "job_sync_logs", force: :cascade do |t|

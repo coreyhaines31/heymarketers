@@ -75,7 +75,15 @@ class JobListingsController < ApplicationController
     if params[:company_profile_id]
       @job_listing = @company_profile.job_listings.find(params[:id])
     else
-      @job_listing = JobListing.find(params[:id])
+      # For public job pages, find by slug
+      identifier = params[:slug] || params[:id]
+      @job_listing = if identifier.match?(/\A\d+\z/)
+                      # If it's just numbers (old ID format), find by ID for backward compatibility
+                      JobListing.find(identifier)
+                    else
+                      # Otherwise, find by slug
+                      JobListing.find_by!(slug: identifier)
+                    end
     end
   end
 
