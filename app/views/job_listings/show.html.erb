@@ -137,7 +137,7 @@
                     <span>📍 Headquarters: <%= @job_listing.company_profile.location.name %></span>
                   <% end %>
                   <% if @job_listing.company_profile.website %>
-                    <%= link_to @job_listing.company_profile.website, @job_listing.company_profile.website, target: "_blank", class: "hover:underline" do %>
+                    <%= link_to @job_listing.company_profile.website, target: "_blank", class: "hover:underline" do %>
                       🌐 Website
                     <% end %>
                   <% end %>

@@ -7,7 +7,7 @@ class JobSearchService
   attr_reader :params, :results
 
   def initialize(params = {})
-    @params = params.with_indifferent_access
+    @params = params.is_a?(ActionController::Parameters) ? params : params.with_indifferent_access
   end
 
   def search

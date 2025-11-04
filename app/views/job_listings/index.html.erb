@@ -59,7 +59,7 @@
 
           <!-- Quick Filters -->
           <div class="flex flex-wrap gap-3">
-            <% if @search_params.any? { |k, v| v.present? && k != 'query' && k != 'sort' } %>
+            <% if @search_params.to_h.any? { |k, v| v.present? && k != 'query' && k != 'sort' } %>
               <%= link_to "Clear Filters", jobs_path, class: "btn btn-outline btn-sm" %>
             <% end %>
 
